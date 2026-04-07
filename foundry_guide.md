@@ -1836,3 +1836,119 @@ Cómputo	Spark, HDPS	Builds / Spark UI	Jobs finalizados sin reintentos (retries)
 Sustrato	Apollo, AtlasDB, Cassandra	Control Panel / Apollo	Disponibilidad de servicios (Uptime 99.9%).
 ¿Te gustaría que definamos los Health Checks específicos para detectar cuando el Funnel se detiene antes de que los usuarios noten la falta de datos?
 Las respuestas de la IA pueden incluir errores. Más información
+
+
+
+
+hay otros componentes que se me han olvidado mencionar ? quizás skylab ?
+¡Buen ojo! Sí, mencionaste un componente clave. Skylab es una pieza fundamental, pero actúa tras bambalinas. Aquí te detallo su rol y otros "olvidados" que completan el mapa técnico de la plataforma: 
+1. Skylab (El Control Plane de Servicios)
+Skylab es el sistema encargado del ciclo de vida de las aplicaciones dentro de una instalación de Foundry. 
+Palantir Blog
+Palantir Blog
+Qué hace: Gestiona la instalación, configuración, arranque, parada y actualización de los cientos de microservicios que componen la plataforma.
+En tu estrategia: Skylab es donde los administradores configuran el "runtime" de los servicios. Si un servicio no levanta tras una actualización, Skylab es la primera herramienta de diagnóstico antes de mirar los logs de la aplicación. 
+Palantir Blog
+Palantir Blog
+2. Rubix (El Sustrato de Kubernetes)
+Si Spark es el motor, Rubix es el chasis sobre el que corre. Es la implementación de Kubernetes propia de Palantir. 
+Palantir Blog
+Palantir Blog
+ +1
+Monitoreo: Rubix garantiza que los trabajos de Spark tengan un rendimiento predecible y aislamiento de recursos (multi-tenancy). Si ves fallas sistémicas en múltiples "Builds", el problema suele estar en la salud de los nodos de Rubix gestionados por Apollo. 
+Palantir
+Palantir
+ +2
+3. Magritte (El Motor de Ingesta)
+Aunque mencionamos HDPS y Data Connection, el servicio interno que realmente ejecuta la ingesta se llama Magritte.
+Importancia: Es el componente que interactúa con los agentes para traer datos de fuentes externas (como SAP, SQL o S3). Si los datos no aparecen en el "Landing Area", el monitoreo de los logs de Magritte es esencial.
+4. Gatekeeper (Seguridad y Gobernanza)
+Es el servicio que aplica las Markings y políticas de acceso a nivel de API.
+Visión Global: Si un usuario no puede ver datos que ya están indexados en la Ontología, no es un fallo de Funnel o ES8, sino posiblemente una denegación de Gatekeeper. Monitorear sus logs es vital para auditorías de seguridad y resolución de problemas de acceso. 
+Palantir
+Palantir
+5. OSO (Object Storage Optimizer)
+Es un componente más moderno que trabaja junto a OSv2.
+Función: Optimiza cómo se almacenan y consultan los objetos para mantener la latencia baja conforme crece la Ontología. 
+Resumen de la Estructura Ampliada
+Componente 	Capa	Rol en el Monitoreo
+Skylab	Infraestructura	Ciclo de vida y configuración de servicios.
+Rubix	Infraestructura	Salud del clúster de Kubernetes y nodos de cómputo.
+Magritte	Ingesta	Ejecución técnica de conectores y pipelines de entrada.
+Gatekeeper	Seguridad	Aplicación de permisos y logs de auditoría.
+¿Quieres que veamos cómo se conectan los logs de Skylab y Apollo para diagnosticar fallas cuando un servicio entra en estado "Unhealthy"?
+Las respuestas de la IA pueden incluir errores. Más información
+
+
+
+
+
+undefined
+undefined
+undefined
+8 sitios
+
+Palantir Blog
+https://blog.palantir.com
+A Sky Full of Clouds - by Robert Fink - Palantir Blog
+27 abr 2020 — Skylab: Managing individual environments. To meet the requirements and expectations of our customers, we had to invest in deployme...
+
+
+01Cloud
+https://engineering.01cloud.com
+Rubix: Palantir's Move to Kubernetes - Engineering Blog
+15 feb 2024 — Palantir Foundry, a data management platform, facilitates data integration through authoring and executing transformation code and...
+
+
+Palantir Blog
+https://blog.palantir.com
+Introducing Rubix: Kubernetes at Palantir
+16 may 2019 — Background. Palantir Foundry is a data management platform that — among other things — enables users to integrate data by authorin...
+
+Mostrar todo
+serías capaz de dibujarme un mockup de como estaría todo organizado ?
+¡Claro! Imagina este mockup como un Dashboard Maestro de Observabilidad diseñado para un Administrador de Plataforma. Está organizado de abajo hacia arriba, siguiendo el flujo lógico desde el hardware hasta el usuario.
+text
+__________________________________________________________________________________
+
+| [FOUNDRY GLOBAL MONITORING]          | Status: OPERATIONAL | Alerts: 2 Minor   |
+|______________________________________|_____________________|___________________|
+|                                                                                |
+|  CAPA 4: EXPERIENCIA DEL USUARIO (CONSUMO)                                     |
+|  [ Contour ] [ Object Explorer ] [ Slate ] --> Status: OK (Latencia <200ms)    |
+|  [ ES8 Cluster ] [██████████░░] 82% Heap Usage | [ ES8 Latency ] 45ms          |
+|________________________________________________________________________________|
+|                                                                                |
+|  CAPA 3: CORAZÓN DE LA ONTOLOGÍA (INDEXACIÓN)                                  |
+|  [ OSS Highbury ] Propagación: 1.2s | [ OSO ] Optimization: Active              |
+|  [ Object Data Funnel ]                                                        |
+|    - Changelog Jobs: [ OK ]                                                    |
+|    - OSv2 Syncs: [ 2 In Progress ] [ 1 Failed! ] <--- [VER DETALLE]            |
+|________________________________________________________________________________|
+|                                                                                |
+|  CAPA 2: MOTOR DE PROCESAMIENTO (CÓMPUTO)                                      |
+|  [ Spark / Builds ]                                                            |
+|    - Active Slots: 45/100 | Queued: 0 | Resource Usage: [████░░░░░░] 40%        |
+|  [ Data Connection / Magritte ]                                                |
+|    - Agent HDPS-01: [ Connected ] | Ingest Rate: 1.2 GB/s                       |
+|________________________________________________________________________________|
+|                                                                                |
+|  CAPA 1: SUSTRATO E INFRAESTRUCTURA (BASE)                                     |
+|  [ Apollo Control Plane ]                                                      |
+|    - Rubix (K8s) Nodes: 12 Online / 0 Error                                    |
+|    - Skylab Service Status: [ Healthy ]                                        |
+|  [ Persistence Layer ]                                                         |
+|    - AtlasDB / Cassandra: [ OK ] | Disk Space: [██████░░░░] 65%                |
+|________________________________________________________________________________|
+|  LOGS RECIENTES (Gatekeeper):                                                  |
+|  14:02:01 - User 'X' - Permission Denied - Dataset 'Y'                         |
+|  14:05:45 - Funnel - Validation Error - Field 'Age' expects Integer            |
+|________________________________________________________________________________|
+Usa el código con precaución.
+
+Cómo leer este Mockup para tu estrategia:
+Visión de "Cascada": Si la Capa 1 (Apollo/Skylab) tiene un error, no pierdas tiempo mirando Spark; la base del sistema está fallando.
+El "Punto Ciego" (Funnel): He incluido el fallo en OSv2 Syncs. Esto es lo que suele pasar: Spark termina bien (Capa 2), pero el Funnel falla (Capa 3). El usuario ve el tablero "viejo".
+Salud de Búsqueda (ES8): Si el Heap Usage de Elasticsearch está en rojo, las búsquedas en la Ontología se congelarán, aunque los datos estén bien indexados.
+Seguridad (Gatekeeper): La sección de logs al final te dice si los "errores de datos" son en realidad problemas de permisos.
+¿Te gustaría que profundicemos en los parámetros específicos que deberías configurar en las alertas de la Capa 3 (Funnel/OSv2)?
