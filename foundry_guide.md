@@ -2080,3 +2080,94 @@ Resumen Visual de la Arquitectura
 Sí, un elemento fundamental que no mencionaste es Carbon. Carbon es el marco de trabajo o "workspace" que unifica la experiencia del usuario; es la interfaz donde ves tus carpetas, archivos y proyectos.
 
 ¿Estás intentando configurar una instancia o estás estudiando para una certificación de Data Engineer en la plataforma?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Gemini ha dicho
+¡Excelente recapitulación! Has mencionado piezas fundamentales que pocos conocen fuera del ecosistema técnico de Palantir. Configurar o entender una instancia on-premise de Foundry requiere ver la plataforma no como un monolito, sino como una arquitectura orientada a servicios (SOA) masiva que corre sobre una abstracción de Kubernetes.
+
+Para que tu diagrama sea útil, debemos separar el Plano de Control (Apollo), el Plano de Datos (Spark/Storage) y la Capa Semántica (Ontología).
+
+Aquí tienes el diagrama en ASCII que organiza todos los componentes que mencionaste (y los que faltaban) de forma jerárquica:
+
+Arquitectura de Palantir Foundry
+Plaintext
+       _________________________________________________________________________
+      |                                                                         |
+      |       USER INTERFACE LAYER (Carbon / Workspace)                         |
+      |  [Workshop]  [Contour]  [Quiver]  [Slate]  [Object Explorer]  [AIP]      |
+      |_________________________________________________________________________|
+          ^                                       ^
+          |                                       |
+ _________________________________       _______________________________________
+|                                 |     |                                       |
+|    ONTOLOGY & SEARCH LAYER      |     |     APPLICATION BACKEND               |
+|  (The Semantic Heart)           |     |                                       |
+| [OSS] -> Object Set Service     |     | [Phonograph] (OLAP/Real-time)         |
+| [Funnel] -> Indexing Pipelines  |     | [Highbury] (Versioned Filesystem)     |
+| [ES8] -> Elasticsearch Search   |     | [Metadata] (Lineage & Governance)     |
+|_________________________________|     |_______________________________________|
+          ^                                       ^
+          |                                       |
+ _______________________________________________________________________________
+|                                                                               |
+|    COMPUTE & DATA ORCHESTRATION                                               |
+|  [Spark] (Engine)  [Build] (Scheduler)  [Code Repos]  [Pipeline Builder]      |
+|  [Magritte] (Data Connection / Agents)  [Indexing]                            |
+|_______________________________________________________________________________|
+          ^                                       ^
+          |                                       |
+ _________________________________       _______________________________________
+|                                 |     |                                       |
+|    INFRASTRUCTURE (The Bedrock) |     |      SYSTEM STATE & STORAGE           |
+| [Apollo] (Continuous Delivery)  |     | [AtlasDB] (Transactional Layer)       |
+| [Rubix]  (K8s Orchestrator)     |     | [Cassandra] (Consistency)             |
+| [OpenShift] (Host Platform)     |     | [HDFS / S3 Storage] (Persistence)     |
+| [Skylab] (Configuration Mgmt)   |     | [Postgres] (Service Metadata)         |
+|_________________________________|     |_______________________________________|
+Análisis de los componentes clave
+Para que tu configuración on-premise tenga sentido, aquí te explico cómo interactúan los elementos que "flotaban" en tu lista:
+
+1. El "Sistema Operativo" (Apollo & Rubix)
+Apollo: No es parte de Foundry, es el dueño de Foundry. Es el orquestador que decide qué versión de cada microservicio instalar y cómo parchearlos sin caída del sistema.
+
+Rubix: Es el sabor de Kubernetes de Palantir. Se encarga de que cuando pidas un "Executor" de Spark, el hardware on-premise responda.
+
+Skylab: Es donde residen las definiciones de configuración (YAMLs) que Apollo inyecta en los servicios.
+
+2. La Capa de Persistencia (AtlasDB & Cassandra)
+AtlasDB: Es una capa de abstracción creada por Palantir sobre bases de datos clave-valor (como Cassandra) para permitir transacciones ACID a escala global. Sin esto, el linaje de datos se rompería.
+
+Highbury: Es el servicio que gestiona el "Filesystem" lógico dentro de Foundry. Cuando ves un archivo en la interfaz, Highbury sabe dónde está realmente en el storage físico.
+
+3. El Flujo de Datos (Magritte -> Spark -> Funnel)
+Magritte: Es el "portero". Se comunica con los Agents instalados fuera de la red de Foundry para traer datos de SQL, SAP o archivos locales.
+
+Funnel: Es un componente crítico que mencionaste. Actúa como el "puente" que toma los datos planos de Spark/Storage y los empuja hacia la Ontología (Elasticsearch y Phonograph) para que el usuario pueda buscarlos.
+
+4. Elementos que faltaban en tu lista:
+Phonograph: Es el motor que permite que los Objetos de Foundry sean "escribibles". Si un usuario edita un registro en Workshop, Phonograph captura esa edición.
+
+Postgres: Aunque mencionas Cassandra y AtlasDB, muchos microservicios de Foundry usan instancias pequeñas de Postgres para sus metadatos internos.
+
+Gatekeeper: El servicio que gestiona la seguridad y el control de acceso basado en políticas (PBAC) en cada nivel de la pila.
+
+Un consejo para tu configuración:
+Si estás en una instalación on-premise, el cuello de botella suele estar en la comunicación entre Magritte Agents y el Control Plane. Asegúrate de que los certificados TLS y los puertos de salida (habitualmente 443) estén bien mapeados en tu red local hacia la instancia de OpenShift.
+
+¿Hay algún error específico que te esté dando Apollo o algún servicio que se quede en estado PENDING?
