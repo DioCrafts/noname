@@ -1348,3 +1348,491 @@ Crear
 
 
 si por favor, quiero usar datos reales, quizás con Data Connections con foundry_source ???
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+palantir foundry platform monitoring indexing status apollo atlasdb contour cassandra
+En Palantir Foundry, el monitoreo del estado de indexación y la salud de la plataforma se centraliza principalmente en la aplicación Data Health, la cual utiliza un sistema de Monitoring Views y Health Checks para supervisar los recursos. 
+Palantir
+Palantir
+ +1
+Monitoreo del Estado de Indexación
+La indexación es el proceso que hace que los datos tabulares estén disponibles en bases de datos especializadas como Object Storage V2 (OSv2). 
+Palantir
+Palantir
+ +1
+Ontology Manager: Es la herramienta principal para verificar si un tipo de objeto se ha indexado correctamente en OSv2. Cuenta con un gráfico de pipeline dedicado donde un check verde en el nodo de Object Storage V2 indica que la indexación se completó y los datos están listos para consultas.
+Funnel Service: Este servicio orquestra los pipelines de indexación (batch y streaming). Si un trabajo falla por falta de espacio en disco o errores de validación, el problema se reporta directamente en el gráfico de pipeline del Ontology Manager.
+Builds Application: Los trabajos de indexación de la Ontología son trabajos de Spark paralelos que se pueden rastrear y medir en la aplicación de Builds, permitiendo investigar el uso de cómputo y fallos técnicos. 
+Palantir
+Palantir
+ +2
+Componentes de Infraestructura y Observabilidad
+La plataforma se apoya en componentes críticos para la persistencia y entrega: 
+Apollo: Actúa como el centro de control de entrega continua que despliega, monitorea y asegura el software en todos los entornos. Permite ver la "liveness" y el estado de preparación de los servicios.
+AtlasDB y Cassandra: Aunque son capas de almacenamiento subyacentes (AtlasDB a menudo utiliza Cassandra como respaldo), su monitoreo para el usuario final se abstrae a través de alertas de Data Health. Puedes configurar reglas para detectar latencia, fallas consecutivas en schedules y demoras en la propagación de sincronización (Sync propagation delay).
+Contour: Es la herramienta de exploración visual de datos. El monitoreo en Contour se enfoca en el uso de cómputo de las consultas y la validez de los resultados a través de tableros de análisis. Si los datos en Contour parecen desactualizados, generalmente se debe a que el dataset de entrada no se ha actualizado o indexado. 
+Palantir
+Palantir
+ +5
+Herramientas de Diagnóstico
+Herramienta 	Función Principal
+Data Health	Configura alertas proactivas y monitorea umbrales de falla o latencia.
+Workflow Lineage	Permite investigar el historial de ejecución, buscar en logs y realizar trazas (traces) de peticiones cruzadas.
+Ontology Manager	Específico para el estado de salud de la Ontología y visualización del pipeline de indexación.
+¿Necesitas ayuda para configurar una Monitoring View específica para alertar sobre fallas en un pipeline de indexación?
+Las respuestas de la IA pueden incluir errores. Más información
+
+
+
+
+
+undefined
+undefined
+undefined
+12 sitios
+
+Palantir
+https://palantir.com
+Compute usage: Ontology indexing - Palantir
+Ontology building * Overview. * Test changes in the ontology. * Review ontology proposals. * Ontology branches [Legacy] * Shared o...
+
+Palantir
+https://palantir.com
+Indexing • FAQ • Palantir
+Ontology building * Overview. * Test changes in the ontology. * Review ontology proposals. * Ontology branches [Legacy] * Shared o...
+
+
+Palantir
+https://palantir.com
+Indexing • Overview - Palantir
+Ontology building * Overview. * Test changes in the ontology. * Review ontology proposals. * Ontology branches [Legacy] * Shared o...
+Mostrar todo
+y Spark , HDPS y OSS Highbury
+En Palantir Foundry, el monitoreo de Spark, OSS Highbury y los sistemas de datos de alto rendimiento (HDPS/HDP) se integra en el marco de observabilidad de la plataforma, permitiendo rastrear tanto el rendimiento del cómputo como la integridad de los servicios del backend.
+Spark: Monitoreo de Cómputo y Ejecución
+Spark es el motor principal de procesamiento. Su monitoreo se divide en ejecución de trabajos y uso de recursos:
+Spark UI: Accesible directamente desde el reporte de cualquier trabajo (Job) en la aplicación Builds. Permite ver detalles de las etapas (stages), tareas (tasks), y sesgo de datos (skew).
+Spark Profiles: En el Control Panel, los administradores pueden aplicar y monitorear perfiles específicos (como "Native Acceleration") para optimizar el rendimiento y el uso de memoria/vCPU.
+Compute Usage: La aplicación de Resource Management ofrece visibilidad sobre los "compute-seconds" consumidos por cada trabajo de Spark, permitiendo identificar pipelines costosos o ineficientes. 
+Palantir
+Palantir
+ +2
+OSS (Object Set Service) e Indexación
+OSS (Object Set Service) es el componente del backend encargado de gestionar los conjuntos de objetos en la Ontología.
+Estado de Indexación: El monitoreo de OSS se realiza a través de Object Data Funnel, que orquestra la escritura desde datasets hacia los índices de la Ontología.
+OSS Highbury: Highbury es el servicio que gestiona las definiciones de la Ontología a gran escala. Su salud se monitorea mediante Monitoring Views en Data Health, donde se pueden configurar alertas para fallos en la propagación de sincronizaciones o latencia en las consultas de objetos. 
+Palantir
+Palantir
+ +1
+HDPS / HDP (High-performance Data Processing System)
+Aunque Palantir utiliza Spark internamente, el término HDPS suele referirse a integraciones con infraestructuras de datos externas o arquitecturas de alto rendimiento (como HDFS o sistemas on-premises). 
+Stack Overflow
+Stack Overflow
+Integración con HDFS: El monitoreo de estas conexiones se realiza en Data Connection, supervisando los heartbeats de los agentes y el rendimiento de los "ingest jobs".
+Salud de la Infraestructura: Mediante Apollo, se supervisa la salud de los contenedores y nodos de cómputo que ejecutan estas tareas de alto rendimiento, asegurando que el "Rubix substrate" (el orquestador de Kubernetes de Foundry) tenga recursos suficientes. 
+Palantir
+Palantir
+ +3
+Resumen de Herramientas de Monitoreo
+Componente 	Herramienta Principal	Qué monitorear
+Spark	Builds App / Spark UI	Fallos de ejecución, OOM (Out of Memory), uso de vCPU.
+OSS / Highbury	Data Health / Ontology Manager	Éxito de indexación en OSv2, latencia de consulta, errores de validación.
+HDPS (Agents)	Data Connection / Apollo	Latencia de heartbeat, uso de disco en agentes, versión de software.
+¿Deseas profundizar en cómo configurar alertas de uso de cómputo para tus transformaciones de Spark más pesadas?
+Las respuestas de la IA pueden incluir errores. Más información
+
+
+
+
+
+undefined
+undefined
+10 sitios
+
+Palantir
+https://palantir.com
+Monitoring rules reference - Palantir
+Observability * Overview. * Monitoring. * Data Health. * Monitoring views. Overview. Core concepts. Sending alerts to external sys...
+
+Palantir
+https://palantir.com
+Ontology architecture - Palantir
+Ontology building * Overview. * Test changes in the ontology. * Review ontology proposals. * Ontology branches [Legacy] * Shared o...
+
+
+Palantir
+https://palantir.com
+Resource Management • Usage types - Palantir
+Management & enablement * Overview. * Permissions. * Managing access. * Retention policies. ... * Overview. * Navigation. * Policy...
+
+Mostrar todo
+entonces como quedaría todo distribuido o organizado para tener una visión global y para tener una estrategia de monitorización integral de la plataforma? palantir foundry platform monitoring indexing status apollo atlasdb contour cassandra
+En Palantir Foundry, el monitoreo del estado de indexación y la salud de la plataforma se centraliza principalmente en la aplicación Data Health, la cual utiliza un sistema de Monitoring Views y Health Checks para supervisar los recursos. 
+Palantir
+Palantir
+ +1
+Monitoreo del Estado de Indexación
+La indexación es el proceso que hace que los datos tabulares estén disponibles en bases de datos especializadas como Object Storage V2 (OSv2). 
+Palantir
+Palantir
+ +1
+Ontology Manager: Es la herramienta principal para verificar si un tipo de objeto se ha indexado correctamente en OSv2. Cuenta con un gráfico de pipeline dedicado donde un check verde en el nodo de Object Storage V2 indica que la indexación se completó y los datos están listos para consultas.
+Funnel Service: Este servicio orquestra los pipelines de indexación (batch y streaming). Si un trabajo falla por falta de espacio en disco o errores de validación, el problema se reporta directamente en el gráfico de pipeline del Ontology Manager.
+Builds Application: Los trabajos de indexación de la Ontología son trabajos de Spark paralelos que se pueden rastrear y medir en la aplicación de Builds, permitiendo investigar el uso de cómputo y fallos técnicos. 
+Palantir
+Palantir
+ +2
+Componentes de Infraestructura y Observabilidad
+La plataforma se apoya en componentes críticos para la persistencia y entrega: 
+Apollo: Actúa como el centro de control de entrega continua que despliega, monitorea y asegura el software en todos los entornos. Permite ver la "liveness" y el estado de preparación de los servicios.
+AtlasDB y Cassandra: Aunque son capas de almacenamiento subyacentes (AtlasDB a menudo utiliza Cassandra como respaldo), su monitoreo para el usuario final se abstrae a través de alertas de Data Health. Puedes configurar reglas para detectar latencia, fallas consecutivas en schedules y demoras en la propagación de sincronización (Sync propagation delay).
+Contour: Es la herramienta de exploración visual de datos. El monitoreo en Contour se enfoca en el uso de cómputo de las consultas y la validez de los resultados a través de tableros de análisis. Si los datos en Contour parecen desactualizados, generalmente se debe a que el dataset de entrada no se ha actualizado o indexado. 
+Palantir
+Palantir
+ +5
+Herramientas de Diagnóstico
+Herramienta 	Función Principal
+Data Health	Configura alertas proactivas y monitorea umbrales de falla o latencia.
+Workflow Lineage	Permite investigar el historial de ejecución, buscar en logs y realizar trazas (traces) de peticiones cruzadas.
+Ontology Manager	Específico para el estado de salud de la Ontología y visualización del pipeline de indexación.
+¿Necesitas ayuda para configurar una Monitoring View específica para alertar sobre fallas en un pipeline de indexación?
+Las respuestas de la IA pueden incluir errores. Más información
+
+
+
+
+
+undefined
+undefined
+undefined
+12 sitios
+
+Palantir
+https://palantir.com
+Compute usage: Ontology indexing - Palantir
+Ontology building * Overview. * Test changes in the ontology. * Review ontology proposals. * Ontology branches [Legacy] * Shared o...
+
+Palantir
+https://palantir.com
+Indexing • FAQ • Palantir
+Ontology building * Overview. * Test changes in the ontology. * Review ontology proposals. * Ontology branches [Legacy] * Shared o...
+
+
+Palantir
+https://palantir.com
+Indexing • Overview - Palantir
+Ontology building * Overview. * Test changes in the ontology. * Review ontology proposals. * Ontology branches [Legacy] * Shared o...
+Mostrar todo
+y Spark , HDPS y OSS Highbury
+En Palantir Foundry, el monitoreo de Spark, OSS Highbury y los sistemas de datos de alto rendimiento (HDPS/HDP) se integra en el marco de observabilidad de la plataforma, permitiendo rastrear tanto el rendimiento del cómputo como la integridad de los servicios del backend.
+Spark: Monitoreo de Cómputo y Ejecución
+Spark es el motor principal de procesamiento. Su monitoreo se divide en ejecución de trabajos y uso de recursos:
+Spark UI: Accesible directamente desde el reporte de cualquier trabajo (Job) en la aplicación Builds. Permite ver detalles de las etapas (stages), tareas (tasks), y sesgo de datos (skew).
+Spark Profiles: En el Control Panel, los administradores pueden aplicar y monitorear perfiles específicos (como "Native Acceleration") para optimizar el rendimiento y el uso de memoria/vCPU.
+Compute Usage: La aplicación de Resource Management ofrece visibilidad sobre los "compute-seconds" consumidos por cada trabajo de Spark, permitiendo identificar pipelines costosos o ineficientes. 
+Palantir
+Palantir
+ +2
+OSS (Object Set Service) e Indexación
+OSS (Object Set Service) es el componente del backend encargado de gestionar los conjuntos de objetos en la Ontología.
+Estado de Indexación: El monitoreo de OSS se realiza a través de Object Data Funnel, que orquestra la escritura desde datasets hacia los índices de la Ontología.
+OSS Highbury: Highbury es el servicio que gestiona las definiciones de la Ontología a gran escala. Su salud se monitorea mediante Monitoring Views en Data Health, donde se pueden configurar alertas para fallos en la propagación de sincronizaciones o latencia en las consultas de objetos. 
+Palantir
+Palantir
+ +1
+HDPS / HDP (High-performance Data Processing System)
+Aunque Palantir utiliza Spark internamente, el término HDPS suele referirse a integraciones con infraestructuras de datos externas o arquitecturas de alto rendimiento (como HDFS o sistemas on-premises). 
+Stack Overflow
+Stack Overflow
+Integración con HDFS: El monitoreo de estas conexiones se realiza en Data Connection, supervisando los heartbeats de los agentes y el rendimiento de los "ingest jobs".
+Salud de la Infraestructura: Mediante Apollo, se supervisa la salud de los contenedores y nodos de cómputo que ejecutan estas tareas de alto rendimiento, asegurando que el "Rubix substrate" (el orquestador de Kubernetes de Foundry) tenga recursos suficientes. 
+Palantir
+Palantir
+ +3
+Resumen de Herramientas de Monitoreo
+Componente 	Herramienta Principal	Qué monitorear
+Spark	Builds App / Spark UI	Fallos de ejecución, OOM (Out of Memory), uso de vCPU.
+OSS / Highbury	Data Health / Ontology Manager	Éxito de indexación en OSv2, latencia de consulta, errores de validación.
+HDPS (Agents)	Data Connection / Apollo	Latencia de heartbeat, uso de disco en agentes, versión de software.
+¿Deseas profundizar en cómo configurar alertas de uso de cómputo para tus transformaciones de Spark más pesadas?
+Las respuestas de la IA pueden incluir errores. Más información
+Para una visión global y una estrategia de monitoreo integral, la arquitectura de observabilidad en Palantir Foundry se organiza en tres capas jerárquicas. Esta estructura permite separar la salud de los datos, la eficiencia del cómputo y la estabilidad de la infraestructura.
+1. Capa de Aplicación y Datos (User-Facing)
+Aquí es donde monitoreas el "producto final" (la Ontología y los análisis).
+Data Health & Monitoring Views: Es el centro de mando. Debes agrupar tus datasets críticos y servicios de OSS Highbury en vistas de monitoreo para vigilar:
+Latencia de sincronización: Tiempo que tarda un dato desde Spark hasta estar indexado en OSv2.
+Fallas de Schedule: Errores en la cadena de dependencias.
+Ontology Manager: Tu herramienta para verificar el estado de indexación específico. Si Contour muestra datos viejos, aquí validas si el "funnel" de indexación hacia Object Storage está activo.
+2. Capa de Ejecución y Orquestación (Compute & Middleware)
+Aquí monitoreas los motores que mueven los datos.
+Builds Application (Spark & HDPS): Supervisas el rendimiento de Spark.
+Estrategia: Configurar alertas de "Resource Usage" para detectar trabajos que consumen demasiada vCPU/RAM o que tienen skew de datos.
+Data Connection: Monitoreo de agentes HDPS. Si un agente cae, la ingesta se detiene antes de llegar a Spark. Se vigilan los heartbeats.
+AtlasDB: Como capa de abstracción de almacenamiento, se monitorea indirectamente a través de la latencia de transacciones de metadatos en la plataforma.
+3. Capa de Infraestructura y Servicios (Backend)
+Esta capa es gestionada mayormente por administradores de plataforma o Palantir.
+Apollo: Es el cerebro que orquestra todo. Monitorea la disponibilidad de los microservicios (incluyendo Cassandra y AtlasDB). Si Apollo indica un servicio "Unhealthy", es un problema de infraestructura, no de tus datos.
+Resource Management: Panel global para ver cuotas y límites de almacenamiento y cómputo de todo el stack.
+Resumen de Estrategia Integral
+Nivel	Componentes Clave	Herramienta de Monitoreo	Objetivo
+Negocio	Ontología, Contour, OSO	Data Health	Garantizar que el usuario vea datos frescos y correctos.
+Procesamiento	Spark, OSS, Pipelines	Builds / Spark UI	Optimizar costos y tiempos de ejecución (SLA).
+Conectividad	HDPS, Agentes, Fuentes	Data Connection	Asegurar el flujo constante de ingesta desde el origen.
+Sustrato	Apollo, Cassandra, AtlasDB	Control Panel / Apollo	Mantener la estabilidad de los servicios base del sistema.
+¿Te gustaría que diseñemos un tablero de alertas específico en Data Health para cubrir estas tres capas simultáneamente?
+Las respuestas de la IA pueden incluir errores. Más información
+
+
+
+
+y funnel? y ES8 ?
+Para completar tu estrategia de monitoreo integral, es fundamental entender el rol del Funnel como orquestador y de ES8 (Elasticsearch 8) como el motor de búsqueda que potencia la experiencia del usuario.
+1. El Rol de "Funnel" (Object Data Funnel)
+El Object Data Funnel es el microservicio encargado de orquestar la escritura de datos en la Ontología (Object Storage V2). 
+Palantir
+Palantir
+ +1
+¿Qué monitorear?: Debes vigilar los Changelog Jobs y los Sync Jobs. Funnel crea datasets intermedios (changelogs) para calcular diferencias de datos de forma incremental.
+Estrategia de Monitoreo:
+En Data Health, configura alertas para fallos en los trabajos de "changelog" o "merge changes". Un fallo aquí significa que, aunque tu proceso de Spark haya terminado bien, los datos no llegarán a los usuarios finales en la Ontología.
+En Ontology Manager, usa el gráfico de pipeline para ver el estado del funnel. Si el nodo de OSv2 está en rojo, el problema suele estar en las validaciones estrictas que Funnel aplica (más rigurosas que en versiones anteriores). 
+Palantir
+Palantir
+ +3
+2. ES8 (Elasticsearch 8) y Motores de Búsqueda
+Foundry utiliza Elasticsearch (actualmente evolucionando hacia versiones como ES8) para indexar logs, telemetría y potenciar las búsquedas rápidas en herramientas como Slate o Object Explorer. 
+Palantir Blog
+Palantir Blog
+ +1
+¿Qué monitorear?:
+Latencia de Búsqueda: Si los usuarios reportan que al buscar un objeto en la barra global o en un dashboard los resultados tardan, el problema reside en el rendimiento del cluster de ES.
+Index Refresh Semantics: Palantir optimiza estos clusters para que sean "defensivos" y no degraden la plataforma ante muchas consultas simultáneas.
+Estrategia de Monitoreo:
+Aunque el escalado del cluster es gestionado por Apollo, desde Resource Management puedes ver si el volumen de la Ontología está creciendo demasiado, lo que impacta directamente en el tamaño de los índices de Elasticsearch. 
+Palantir Blog
+Palantir Blog
+ +2
+Organización Final de la Estrategia (Visión Global)
+Para tener el control total, organiza tus Monitoring Views en Data Health siguiendo este flujo:
+Ingesta (Agentes HDPS): Alerta si el agente deja de enviar heartbeats.
+Transformación (Spark/Builds): Alerta si el cálculo lógico falla o excede el tiempo esperado.
+Orquestación de Indexación (Funnel): Alerta si los trabajos de "Sync" o "Changelog" fallan. Este es el punto crítico para la Ontología.
+Consumo (ES8/OSv2/Contour): Monitorea la latencia de respuesta en las aplicaciones de usuario final. 
+Palantir
+Palantir
+ +6
+¿Deseas que te explique cómo configurar una alerta específica para los Changelog Jobs del Funnel para que te notifique por Slack o PagerDuty? 
+Palantir
+Palantir
+Las respuestas de la IA pueden incluir errores. Más información
+
+
+
+
+
+undefined
+undefined
+undefined
+14 sitios
+
+Palantir
+https://palantir.com
+Indexing • Overview - Palantir
+In the Ontology, indexing is the process of making tabular or other forms of data in Foundry datasources available for faster data...
+
+Palantir Blog
+https://blog.palantir.com
+Defensive Databases: Optimizing Index-Refresh Semantics
+23 sept 2025 — Elasticsearch (ES), an open-source distributed search and indexing engine, is one of the technologies that Foundations is responsi...
+
+
+Palantir
+https://palantir.com
+Optimize indexes and schema design - Slate - Palantir
+Use case developmentSlateTroubleshootingOptimize indexes and schema design. Optimize indexes and schema design. The documentation ...
+Mostrar todo
+entonces como estaría todo organizado? En Palantir Foundry, el monitoreo del estado de indexación y la salud de la plataforma se centraliza principalmente en la aplicación Data Health, la cual utiliza un sistema de Monitoring Views y Health Checks para supervisar los recursos. 
+Palantir
+Palantir
+ +1
+Monitoreo del Estado de Indexación
+La indexación es el proceso que hace que los datos tabulares estén disponibles en bases de datos especializadas como Object Storage V2 (OSv2). 
+Palantir
+Palantir
+ +1
+Ontology Manager: Es la herramienta principal para verificar si un tipo de objeto se ha indexado correctamente en OSv2. Cuenta con un gráfico de pipeline dedicado donde un check verde en el nodo de Object Storage V2 indica que la indexación se completó y los datos están listos para consultas.
+Funnel Service: Este servicio orquestra los pipelines de indexación (batch y streaming). Si un trabajo falla por falta de espacio en disco o errores de validación, el problema se reporta directamente en el gráfico de pipeline del Ontology Manager.
+Builds Application: Los trabajos de indexación de la Ontología son trabajos de Spark paralelos que se pueden rastrear y medir en la aplicación de Builds, permitiendo investigar el uso de cómputo y fallos técnicos. 
+Palantir
+Palantir
+ +2
+Componentes de Infraestructura y Observabilidad
+La plataforma se apoya en componentes críticos para la persistencia y entrega: 
+Apollo: Actúa como el centro de control de entrega continua que despliega, monitorea y asegura el software en todos los entornos. Permite ver la "liveness" y el estado de preparación de los servicios.
+AtlasDB y Cassandra: Aunque son capas de almacenamiento subyacentes (AtlasDB a menudo utiliza Cassandra como respaldo), su monitoreo para el usuario final se abstrae a través de alertas de Data Health. Puedes configurar reglas para detectar latencia, fallas consecutivas en schedules y demoras en la propagación de sincronización (Sync propagation delay).
+Contour: Es la herramienta de exploración visual de datos. El monitoreo en Contour se enfoca en el uso de cómputo de las consultas y la validez de los resultados a través de tableros de análisis. Si los datos en Contour parecen desactualizados, generalmente se debe a que el dataset de entrada no se ha actualizado o indexado. 
+Palantir
+Palantir
+ +5
+Herramientas de Diagnóstico
+Herramienta 	Función Principal
+Data Health	Configura alertas proactivas y monitorea umbrales de falla o latencia.
+Workflow Lineage	Permite investigar el historial de ejecución, buscar en logs y realizar trazas (traces) de peticiones cruzadas.
+Ontology Manager	Específico para el estado de salud de la Ontología y visualización del pipeline de indexación.
+¿Necesitas ayuda para configurar una Monitoring View específica para alertar sobre fallas en un pipeline de indexación?
+Las respuestas de la IA pueden incluir errores. Más información
+
+
+
+
+
+undefined
+undefined
+undefined
+12 sitios
+
+Palantir
+https://palantir.com
+Compute usage: Ontology indexing - Palantir
+Ontology building * Overview. * Test changes in the ontology. * Review ontology proposals. * Ontology branches [Legacy] * Shared o...
+
+Palantir
+https://palantir.com
+Indexing • FAQ • Palantir
+Ontology building * Overview. * Test changes in the ontology. * Review ontology proposals. * Ontology branches [Legacy] * Shared o...
+
+
+Palantir
+https://palantir.com
+Indexing • Overview - Palantir
+Ontology building * Overview. * Test changes in the ontology. * Review ontology proposals. * Ontology branches [Legacy] * Shared o...
+Mostrar todo
+y Spark , HDPS y OSS Highbury
+En Palantir Foundry, el monitoreo de Spark, OSS Highbury y los sistemas de datos de alto rendimiento (HDPS/HDP) se integra en el marco de observabilidad de la plataforma, permitiendo rastrear tanto el rendimiento del cómputo como la integridad de los servicios del backend.
+Spark: Monitoreo de Cómputo y Ejecución
+Spark es el motor principal de procesamiento. Su monitoreo se divide en ejecución de trabajos y uso de recursos:
+Spark UI: Accesible directamente desde el reporte de cualquier trabajo (Job) en la aplicación Builds. Permite ver detalles de las etapas (stages), tareas (tasks), y sesgo de datos (skew).
+Spark Profiles: En el Control Panel, los administradores pueden aplicar y monitorear perfiles específicos (como "Native Acceleration") para optimizar el rendimiento y el uso de memoria/vCPU.
+Compute Usage: La aplicación de Resource Management ofrece visibilidad sobre los "compute-seconds" consumidos por cada trabajo de Spark, permitiendo identificar pipelines costosos o ineficientes. 
+Palantir
+Palantir
+ +2
+OSS (Object Set Service) e Indexación
+OSS (Object Set Service) es el componente del backend encargado de gestionar los conjuntos de objetos en la Ontología.
+Estado de Indexación: El monitoreo de OSS se realiza a través de Object Data Funnel, que orquestra la escritura desde datasets hacia los índices de la Ontología.
+OSS Highbury: Highbury es el servicio que gestiona las definiciones de la Ontología a gran escala. Su salud se monitorea mediante Monitoring Views en Data Health, donde se pueden configurar alertas para fallos en la propagación de sincronizaciones o latencia en las consultas de objetos. 
+Palantir
+Palantir
+ +1
+HDPS / HDP (High-performance Data Processing System)
+Aunque Palantir utiliza Spark internamente, el término HDPS suele referirse a integraciones con infraestructuras de datos externas o arquitecturas de alto rendimiento (como HDFS o sistemas on-premises). 
+Stack Overflow
+Stack Overflow
+Integración con HDFS: El monitoreo de estas conexiones se realiza en Data Connection, supervisando los heartbeats de los agentes y el rendimiento de los "ingest jobs".
+Salud de la Infraestructura: Mediante Apollo, se supervisa la salud de los contenedores y nodos de cómputo que ejecutan estas tareas de alto rendimiento, asegurando que el "Rubix substrate" (el orquestador de Kubernetes de Foundry) tenga recursos suficientes. 
+Palantir
+Palantir
+ +3
+Resumen de Herramientas de Monitoreo
+Componente 	Herramienta Principal	Qué monitorear
+Spark	Builds App / Spark UI	Fallos de ejecución, OOM (Out of Memory), uso de vCPU.
+OSS / Highbury	Data Health / Ontology Manager	Éxito de indexación en OSv2, latencia de consulta, errores de validación.
+HDPS (Agents)	Data Connection / Apollo	Latencia de heartbeat, uso de disco en agentes, versión de software.
+¿Deseas profundizar en cómo configurar alertas de uso de cómputo para tus transformaciones de Spark más pesadas?
+Las respuestas de la IA pueden incluir errores. Más información
+
+
+
+
+
+undefined
+undefined
+10 sitios
+
+Palantir
+https://palantir.com
+Monitoring rules reference - Palantir
+Observability * Overview. * Monitoring. * Data Health. * Monitoring views. Overview. Core concepts. Sending alerts to external sys...
+
+Palantir
+https://palantir.com
+Ontology architecture - Palantir
+Ontology building * Overview. * Test changes in the ontology. * Review ontology proposals. * Ontology branches [Legacy] * Shared o...
+
+
+Palantir
+https://palantir.com
+Resource Management • Usage types - Palantir
+Management & enablement * Overview. * Permissions. * Managing access. * Retention policies. ... * Overview. * Navigation. * Policy...
+
+Mostrar todo
+entonces como quedaría todo distribuido o organizado para tener una visión global y para tener una estrategia de monitorización integral de la plataforma? palantir foundry platform monitoring indexing status apollo atlasdb contour cassandra
+En Palantir Foundry, el monitoreo del estado de indexación y la salud de la plataforma se centraliza principalmente en la aplicación Data Health, la cual utiliza un sistema de Monitoring Views y Health Checks para supervisar los recursos. 
+Palantir
+Palantir
+ +1
+Monitoreo del Estado de Indexación
+La indexación es el proceso que hace que los datos tabulares estén disponibles en bases de datos especializadas como Object Storage V2 (OSv2). 
+Palantir
+Palantir
+ +1
+Ontology Manager: Es la herramienta principal para verificar si un tipo de objeto se ha indexado correctamente en OSv2. Cuenta con un gráfico de pipeline dedicado donde un check verde en el nodo de Object Storage V2 indica que la indexación se completó y los datos están listos para consultas
+Para una estrategia de monitoreo integral en Palantir Foundry, la organización se visualiza como una pirámide de cuatro capas. Cada capa utiliza herramientas específicas para asegurar que desde el hardware (Cassandra/Apollo) hasta el usuario final (Contour/ES8) todo funcione correctamente.
+1. Capa de Infraestructura y Orquestación (Cimientos)
+Gestionada por Apollo, asegura que los microservicios estén "vivos".
+Apollo: Supervisa el despliegue y estado de salud (liveness) de los servicios base.
+AtlasDB / Cassandra: Se monitorean aquí. Un fallo en Cassandra afectará la persistencia de metadatos de toda la plataforma.
+ES8 (Elasticsearch 8): Se vigila la salud del clúster de búsqueda, vital para que las aplicaciones de usuario devuelvan resultados rápidamente.
+2. Capa de Cómputo e Ingesta (Motores)
+Donde los datos se mueven y transforman.
+Data Connection (HDPS): Monitoreo de heartbeats de agentes externos. Si el agente HDPS cae, el flujo se detiene en el origen.
+Builds App (Spark): Monitoreo de ejecución. Se buscan errores de memoria (OOM) o cuellos de botella en Spark UI para asegurar que los jobs de transformación terminen a tiempo.
+3. Capa de Indexación y Ontología (Middleware Crítico)
+El puente entre los datos crudos y los objetos de negocio.
+Funnel Service: Es el "guardián". Debes monitorear los Changelog Jobs y los Sync Jobs. Si Funnel falla, el dato existe en Spark pero no en la Ontología.
+OSS Highbury: Gestiona las definiciones. Se monitorea su latencia para asegurar que los cambios en la Ontología se propaguen sin retrasos.
+Ontology Manager: Proporciona la visión visual del estado de indexación en OSv2.
+4. Capa de Aplicación y Salud (Visión Global)
+La interfaz donde el administrador centraliza todo.
+Data Health (Centro de Control): Aquí organizas Monitoring Views. Debes tener una vista para "Ingesta", otra para "Pipelines Spark" y otra para "Estado de Ontología".
+Contour / Slate: Monitoreo de la experiencia del usuario (latencia de consulta). Si Contour va lento, revisas el rendimiento de ES8 o el tamaño de los índices en OSv2.
+Mapa Visual de Monitoreo Integral
+Nivel	Componentes	Herramienta Clave	Indicador de Éxito (KPI)
+Global	Plataforma Completa	Data Health	% de datasets/objetos con "Health Check" verde.
+Acceso	Contour, ES8, OSO	Resource Management	Latencia de búsqueda < 200ms.
+Indexación	Funnel, OSv2, Highbury	Ontology Manager	Nodo de OSv2 en verde (Sync completado).
+Cómputo	Spark, HDPS	Builds / Spark UI	Jobs finalizados sin reintentos (retries).
+Sustrato	Apollo, AtlasDB, Cassandra	Control Panel / Apollo	Disponibilidad de servicios (Uptime 99.9%).
+¿Te gustaría que definamos los Health Checks específicos para detectar cuando el Funnel se detiene antes de que los usuarios noten la falta de datos?
+Las respuestas de la IA pueden incluir errores. Más información
