@@ -1,0 +1,535 @@
+# Workshop y Aplicaciones Operativas en Palantir Foundry — Apuntes
+
+> **Workshop** es el constructor de aplicaciones web low-code/no-code de Foundry. Permite crear apps operativas directamente sobre la Ontología: leer objetos, filtrar, navegar relaciones y disparar Actions, sin salir de Foundry.
+>
+> Última actualización: 2026-04-08
+
+---
+
+## Índice
+
+1. [Qué es Workshop y para qué se usa](#1-qué-es-workshop-y-para-qué-se-usa)
+2. [Conceptos fundamentales](#2-conceptos-fundamentales)
+3. [Integración con la Ontología](#3-integración-con-la-ontología)
+4. [Actions y write-backs desde la UI](#4-actions-y-write-backs-desde-la-ui)
+5. [Patrones comunes de aplicaciones](#5-patrones-comunes-de-aplicaciones)
+6. [Seguridad y permisos](#6-seguridad-y-permisos)
+7. [Rendimiento y UX](#7-rendimiento-y-ux)
+8. [Observabilidad y troubleshooting](#8-observabilidad-y-troubleshooting)
+9. [Ejemplo end-to-end: app de Pedidos](#9-ejemplo-end-to-end-app-de-pedidos)
+10. [Checklist para publicar una app](#10-checklist-para-publicar-una-app)
+
+---
+
+## 1. Qué es Workshop y para qué se usa
+
+Workshop es el **front-end operativo** de Foundry. Permite construir aplicaciones web completas sobre la Ontología sin necesidad de desplegar infraestructura externa.
+
+```
+                  ┌─────────────────────────────────────────┐
+                  │             WORKSHOP (UI)               │
+                  │  ┌──────────┐  ┌──────────┐  ┌───────┐ │
+                  │  │ Tabla    │  │ Detalle  │  │ Botón │ │
+                  │  │ objetos  │  │ objeto   │  │ Action│ │
+                  │  └────┬─────┘  └────┬─────┘  └───┬───┘ │
+                  └───────┼─────────────┼─────────────┼─────┘
+                          │             │             │
+                  ┌───────▼─────────────▼─────────────▼─────┐
+                  │           ONTOLOGÍA (Foundry)            │
+                  │  Object Types · Link Types · Actions     │
+                  └──────────────────────────────────────────┘
+```
+
+### Casos de uso típicos
+
+| Caso de uso | Ejemplo |
+|---|---|
+| **Cola de trabajo** | Revisar y clasificar incidencias o tareas |
+| **Master-detail** | Lista de pedidos → ver detalle de un pedido |
+| **Approval workflow** | Aprobar/rechazar solicitudes con un botón |
+| **Dashboard operativo** | Ver estado de flota, inventario, pedidos |
+| **Formulario de alta** | Crear nuevos objetos desde la UI |
+| **Search & filter** | Buscar clientes, filtrar por estado/fecha |
+
+---
+
+## 2. Conceptos fundamentales
+
+### 2.1 Páginas
+
+Una app de Workshop se compone de **páginas**. Cada página agrupa widgets relacionados.
+
+- Se puede navegar entre páginas con parámetros (ej: ID de objeto seleccionado).
+- Las páginas pueden tener parámetros de entrada (URL-level parameters).
+
+### 2.2 Componentes / Widgets
+
+Los widgets son los bloques de construcción de la UI:
+
+| Widget | Para qué |
+|---|---|
+| **Object Table** | Listar objetos de un Object Set |
+| **Object Detail** | Ver propiedades de un único objeto |
+| **Filtering Widget** | Filtrar un Object Set interactivamente |
+| **Chart / Graph** | Gráficos de barras, líneas, pastel |
+| **Form** | Inputs para disparar Actions |
+| **Button** | Ejecutar una Action |
+| **Text / Markdown** | Etiquetas, ayuda contextual |
+| **Container / Layout** | Organizar otros widgets |
+| **Link / Navigation** | Navegar a otra página o URL |
+| **Conditional Visibility** | Mostrar/ocultar según estado |
+
+### 2.3 Variables y estado
+
+Las variables son el **sistema de estado** de Workshop:
+
+- **Variables locales de página:** guardan selecciones, valores de inputs, etc.
+- **Variables de formulario:** capturan inputs del usuario para alimentar una Action.
+- **Parámetros de página:** valores que se pasan al navegar entre páginas.
+
+```
+Usuario selecciona fila en tabla
+          │
+          ▼
+ Variable: selectedOrderId = "ORD-1234"
+          │
+          ├──▶ Object Detail muestra el objeto ORD-1234
+          └──▶ Botón "Aprobar" pasa selectedOrderId a la Action
+```
+
+### 2.4 Eventos
+
+Los widgets exponen **eventos** que activan acciones:
+
+| Evento | Descripción |
+|---|---|
+| `onClick` (botón) | Ejecutar Action o navegar |
+| `onRowSelect` (tabla) | Actualizar variable con objeto seleccionado |
+| `onChange` (filtro/input) | Actualizar variable y refrescar queries |
+| `onLoad` (página) | Ejecutar lógica al cargar la página |
+
+### 2.5 Queries a Object Sets
+
+Los widgets que muestran objetos usan **Object Set queries**:
+
+- Se define el **Object Type** a consultar.
+- Se aplican **filtros** (estáticos o vinculados a variables).
+- Se definen las **columnas/propiedades** a mostrar.
+- Se configura la **paginación** y el **orden**.
+
+---
+
+## 3. Integración con la Ontología
+
+### 3.1 Lectura de objetos
+
+Workshop se conecta directamente a la Ontología para leer objetos. No necesitas datasets ni SQL.
+
+```
+Workshop Object Table
+   │  Object Type: "Pedido"
+   │  Filtro: estado = variable.filtroEstado
+   │  Orden: fecha_creacion DESC
+   │  Paginación: 50 por página
+   ▼
+Ontología (Phonograph/ES8)
+   → devuelve lista de objetos Pedido
+```
+
+### 3.2 Navegación por links (relaciones)
+
+Si dos Object Types están relacionados mediante un Link Type, Workshop puede navegar esa relación:
+
+```
+Objeto Pedido (seleccionado)
+    │
+    └──▶ Link "tiene_lineas" ──▶ Object Set de LineaPedido
+              │
+              └──▶ Widget tabla secundaria muestra las líneas del pedido
+```
+
+Esto se configura directamente en el widget: "mostrar objetos relacionados al objeto seleccionado".
+
+### 3.3 Object Sets como fuente de datos
+
+Un **Object Set** en Workshop puede ser:
+
+| Tipo | Descripción |
+|---|---|
+| **Todo el Object Type** | Todos los pedidos (sin filtro) |
+| **Filtrado estático** | Pedidos con `estado = "PENDIENTE"` |
+| **Filtrado dinámico** | Pedidos donde `estado = variable.filtroEstado` |
+| **Relacionado** | Líneas del pedido seleccionado |
+| **Por búsqueda de texto** | Objetos cuyo nombre contiene el texto buscado |
+
+---
+
+## 4. Actions y write-backs desde la UI
+
+### 4.1 Disparar Actions desde botones
+
+Un **botón** en Workshop puede estar vinculado a una **Action** de la Ontología:
+
+```
+[Botón "Aprobar Pedido"]
+   │
+   ├─ Parámetros de la Action tomados de variables locales:
+   │     pedidoId  = selectedOrderId
+   │     aprobador = currentUser
+   │
+   └─▶ Action "aprobarPedido" (definida en Ontología)
+            │
+            ├─▶ Validaciones (reglas de la Action)
+            └─▶ Writeback al dataset / OSS
+```
+
+### 4.2 Formularios y Actions
+
+Para Actions que requieren input del usuario, Workshop usa widgets de formulario:
+
+- **Text Input** → parámetro String de la Action
+- **Date Picker** → parámetro Date
+- **Dropdown / Select** → parámetro Enum
+- **Number Input** → parámetro Integer / Double
+- **Object Selector** → parámetro Object Reference
+
+Workshop valida automáticamente las restricciones definidas en la Action (campos obligatorios, rangos, etc.) antes de permitir la ejecución.
+
+### 4.3 Validaciones y restricciones
+
+Las restricciones se definen en la Ontología (sobre la Action), no en el Widget:
+
+```
+Action "actualizarStock"
+   ├─ Parámetro: cantidad (Integer)
+   │     Restricción: cantidad >= 0
+   │     Restricción: cantidad <= stock_actual
+   └─ Restricción de contexto: el objeto no está archivado
+```
+
+Si el usuario intenta disparar la Action con valores inválidos, Workshop muestra el error directamente en el formulario.
+
+### 4.4 Writeback datasets
+
+Cuando se ejecuta una Action, los cambios se escriben en:
+
+1. El **writeback dataset** asociado al Object Type.
+2. La Ontología re-indexa ese objeto (via Funnel/Phonograph).
+3. La UI se refresca automáticamente mostrando el nuevo estado.
+
+---
+
+## 5. Patrones comunes de aplicaciones
+
+### 5.1 Search + Filter + Detail
+
+```
+┌─────────────────────────────────────────────────────┐
+│  [Búsqueda texto] [Filtro estado ▼] [Filtro fecha]  │
+│─────────────────────────────────────────────────────│
+│  TABLA DE OBJETOS (paginada)                        │
+│  ID     | Cliente  | Estado   | Fecha    | Importe  │
+│  ORD-01 | Acme SA  | PENDIENTE│ 01/04    | 1.200€   │◀─ onRowSelect
+│  ORD-02 | Beta SL  | ENVIADO  │ 02/04    |   800€   │   → selectedId
+│─────────────────────────────────────────────────────│
+│  PANEL DE DETALLE (cuando hay selección)            │
+│  Pedido: ORD-01 · Cliente: Acme SA · Estado: ...    │
+│  [Botón Aprobar] [Botón Cancelar]                   │
+└─────────────────────────────────────────────────────┘
+```
+
+### 5.2 Master-detail (páginas separadas)
+
+```
+Página "Lista Pedidos"          Página "Detalle Pedido"
+┌────────────────────┐          ┌────────────────────────┐
+│ Tabla de pedidos   │          │ Propiedades del pedido │
+│ [click en fila]    │ ────────▶│ Líneas del pedido      │
+│                    │  navega  │ Historial de estados   │
+└────────────────────┘  con id  │ [Botones de acción]    │
+                                └────────────────────────┘
+```
+
+Navegación con parámetro:
+```
+onRowSelect → navigate("detalle-pedido", { pedidoId: row.id })
+```
+
+### 5.3 Cola de trabajo (work queue)
+
+```
+Object Set filtrado:
+  - tipo = "INCIDENCIA"
+  - estado = "PENDIENTE"
+  - assignee = currentUser (o sin asignar)
+  - orden: prioridad DESC, fecha_creacion ASC
+
+Acciones disponibles por item:
+  - [Asignarme]
+  - [Marcar en progreso]
+  - [Resolver] → formulario con notas de resolución
+  - [Escalar]
+```
+
+### 5.4 Approval workflow
+
+```
+Estado actual del objeto: "EN_REVISION"
+  │
+  ├─ Condición: currentUser tiene rol "APPROVER"
+  │     └─▶ Muestra: [Aprobar] [Rechazar] [Solicitar cambios]
+  │
+  └─ Condición: currentUser NO tiene rol "APPROVER"
+        └─▶ Muestra solo estado (sin botones de aprobación)
+```
+
+La visibilidad condicional de botones se controla con **variables de contexto** (rol del usuario, estado del objeto).
+
+---
+
+## 6. Seguridad y permisos
+
+### 6.1 Permisos necesarios (Gatekeeper)
+
+| Recurso | Permiso necesario |
+|---|---|
+| **Ver la app** | Acceso a la aplicación Workshop (Gatekeeper) |
+| **Leer objetos** | Acceso al Object Type (Gatekeeper sobre el backing dataset) |
+| **Ejecutar Actions** | Permiso explícito sobre la Action en Gatekeeper |
+| **Navegar links** | Acceso a los Object Types de ambos extremos del link |
+| **Datasets de writeback** | Escritura sobre el writeback dataset |
+
+### 6.2 Visibilidad por markings
+
+Si los objetos tienen **markings** (ver `seguridad-y-gobernanza.md`):
+
+- Un usuario solo verá objetos cuyos markings incluya en su perfil.
+- Workshop filtra silenciosamente — el usuario no ve los objetos que no tiene acceso.
+- Los contadores y agregados también se ajustan a lo visible.
+
+```
+Total objetos en Object Type "Pedido": 10.000
+Usuario con marking "CONFIDENCIAL":   ve 3.500
+Usuario sin marking:                  ve 6.500
+```
+
+### 6.3 Errores típicos de permisos
+
+| Error en UI | Causa probable | Solución |
+|---|---|---|
+| Tabla vacía (sin error) | Sin acceso al Object Type | Verificar Gatekeeper en backing dataset |
+| "Action not available" | Sin permiso sobre la Action | Añadir rol en Gatekeeper de la Action |
+| Botón deshabilitado | Restricción de la Action no cumplida | Revisar condiciones de la Action |
+| "Object not found" al navegar | Sin acceso al objeto destino | Revisar markings / permisos del usuario |
+| App no aparece en catálogo | Sin acceso a la app | Añadir usuario en permisos de la app |
+
+---
+
+## 7. Rendimiento y UX
+
+### 7.1 Paginación
+
+Siempre usa paginación en tablas de objetos. Cargar miles de objetos sin paginar:
+- degrada el rendimiento del navegador,
+- aumenta la latencia de la app,
+- no aporta valor al usuario operativo.
+
+**Configuración recomendada:** 25–100 objetos por página según el caso de uso.
+
+### 7.2 Evitar queries pesadas
+
+| Práctica problemática | Alternativa |
+|---|---|
+| Cargar todos los objetos y filtrar en cliente | Aplicar filtros en el Object Set (server-side) |
+| Object Set sin filtro en tablas grandes | Añadir filtro inicial obligatorio o búsqueda de texto |
+| Múltiples widgets consultando el mismo Object Set independientemente | Compartir el mismo Object Set con variables vinculadas |
+| Refrescar toda la página para ver cambios | Usar "refresh Object Set" selectivo post-Action |
+
+### 7.3 Caching y refresco
+
+- Workshop cachea los resultados de Object Sets en el cliente durante la sesión.
+- Tras ejecutar una Action, se puede configurar qué Object Sets se refrescan automáticamente.
+- Para datos que cambian muy frecuentemente, considera un refresco periódico o un aviso manual al usuario.
+
+### 7.4 Límites de resultados
+
+| Límite | Valor típico | Impacto si se supera |
+|---|---|---|
+| Objetos por página en tabla | 100 | Lentitud de renderizado |
+| Objetos en un Object Set sin paginar | 1.000 – 10.000 | Timeout / error |
+| Propiedades mostradas en tabla | ~20 | Lentitud horizontal |
+| Niveles de navegación de links | 2–3 | Latencia acumulada |
+
+---
+
+## 8. Observabilidad y troubleshooting
+
+### 8.1 Errores típicos y diagnóstico
+
+| Síntoma | Causa probable | Cómo diagnosticar |
+|---|---|---|
+| **No ve objetos (tabla vacía)** | Sin permisos, markings insuficientes, filtro muy restrictivo | Probar en Object Explorer con mismo usuario; revisar Gatekeeper |
+| **Action falla al ejecutar** | Parámetros inválidos, restricciones no cumplidas, permisos | Ver mensaje de error de la Action; revisar definición en Ontología |
+| **Latencia alta al cargar** | Object Set sin filtro, demasiados objetos, query compleja | Añadir filtros obligatorios; revisar tamaño del Object Set |
+| **Datos obsoletos** | Backing dataset no actualizado, pipeline parado | Verificar el Build del pipeline en Foundry; comprobar freshness |
+| **Botón siempre deshabilitado** | Condición de Action no se cumple, variable vacía | Inspeccionar la variable en modo debug; revisar condiciones |
+| **Error al navegar entre páginas** | Parámetro no pasado, página incorrecta | Revisar la configuración de navegación y parámetros |
+| **App no carga / pantalla en blanco** | Error de configuración de widget, permiso faltante | Abrir consola del navegador; revisar permisos de la app |
+
+### 8.2 Herramientas de diagnóstico
+
+```
+1. Object Explorer (Foundry)
+   └─▶ Probar queries directamente sobre el Object Type
+       sin la capa de Workshop
+
+2. Action debugger (Ontología)
+   └─▶ Ejecutar Actions con parámetros de prueba
+
+3. Build status (Pipeline Builder)
+   └─▶ Verificar que el backing dataset está actualizado
+
+4. Gatekeeper / permisos
+   └─▶ Revisar qué grupos tienen acceso
+
+5. Consola del navegador (F12)
+   └─▶ Errores de carga, llamadas a la API fallidas
+```
+
+---
+
+## 9. Ejemplo end-to-end: app de Pedidos
+
+Este ejemplo construye una app operativa para gestionar pedidos: listar, filtrar, ver detalle y aprobar.
+
+### 9.1 Ontología necesaria
+
+```
+Object Type: Pedido
+  Propiedades: id, cliente_nombre, estado, fecha_creacion, importe_total
+  Backing dataset: gold_pedidos
+
+Object Type: LineaPedido
+  Propiedades: id, pedido_id, producto, cantidad, precio_unitario
+  Backing dataset: gold_lineas_pedido
+
+Link Type: pedido_tiene_lineas
+  Origen: Pedido
+  Destino: LineaPedido
+  Cardinalidad: 1:N
+  Clave: pedido_id
+
+Action: aprobarPedido
+  Parámetro: pedidoId (String)
+  Restricción: estado_actual = "PENDIENTE"
+  Writeback: actualiza estado → "APROBADO" en writeback_pedidos
+```
+
+### 9.2 Estructura de la app
+
+```
+App "Gestión de Pedidos"
+├── Página 1: "Lista de Pedidos"
+│     ├── Widget: Filtro por estado (variable: filtroEstado)
+│     ├── Widget: Búsqueda por cliente (variable: textoBusqueda)
+│     ├── Widget: Object Table
+│     │     Object Set: Pedidos
+│     │     Filtro: estado = filtroEstado (si no vacío)
+│     │     Filtro: cliente_nombre contiene textoBusqueda
+│     │     Columnas: id, cliente_nombre, estado, fecha_creacion, importe_total
+│     │     onRowSelect → selectedPedidoId = row.id
+│     └── Widget: Botón "Ver Detalle"
+│           onClick → navigate("Detalle Pedido", { pedidoId: selectedPedidoId })
+│           Visible si: selectedPedidoId no es nulo
+│
+└── Página 2: "Detalle Pedido"
+      Parámetro de entrada: pedidoId
+      ├── Widget: Object Detail
+      │     Object: Pedido con id = pedidoId
+      │     Propiedades: todas
+      ├── Widget: Object Table (líneas)
+      │     Object Set: LineaPedido relacionados via pedido_tiene_lineas
+      │     Origen: objeto Pedido seleccionado
+      │     Columnas: producto, cantidad, precio_unitario
+      └── Widget: Botón "Aprobar Pedido"
+            Visible si: estado_actual = "PENDIENTE"
+            onClick → Action "aprobarPedido" (pedidoId = pedidoId)
+            Post-Action: refresh Object Detail
+```
+
+### 9.3 Flujo de usuario completo
+
+```
+Usuario abre la app "Gestión de Pedidos"
+   │
+   ▼
+Página 1: ve tabla con todos los pedidos PENDIENTES (filtro inicial)
+   │
+   ├── Filtra por cliente "Acme" → tabla se actualiza
+   │
+   ├── Hace clic en fila ORD-1234 → selectedPedidoId = "ORD-1234"
+   │
+   └── Clic "Ver Detalle" → navega a Página 2 con pedidoId="ORD-1234"
+          │
+          ▼
+       Página 2: ve propiedades del pedido ORD-1234
+          │         y sus líneas en tabla secundaria
+          │
+          └── Clic "Aprobar Pedido"
+                 │
+                 ├── Action valida: estado = PENDIENTE ✓
+                 ├── Action escribe en writeback_pedidos: estado → APROBADO
+                 ├── Ontología re-indexa ORD-1234
+                 └── Object Detail se refresca: estado = APROBADO ✓
+```
+
+---
+
+## 10. Checklist para publicar una app
+
+### Funcionalidad
+
+- [ ] Todos los Object Types necesarios tienen backing dataset actualizado
+- [ ] Los Link Types necesarios están definidos y sincronizados
+- [ ] Las Actions están definidas con sus restricciones y write-backs
+- [ ] Los widgets están vinculados a las variables correctas
+- [ ] La navegación entre páginas pasa los parámetros correctamente
+- [ ] Los formularios validan los campos obligatorios antes de enviar
+
+### Seguridad
+
+- [ ] Los permisos de la app están configurados en Gatekeeper
+- [ ] Los usuarios/grupos que deben ver la app tienen acceso
+- [ ] Los permisos sobre los Object Types son correctos
+- [ ] Los permisos sobre las Actions son correctos
+- [ ] Los markings relevantes están aplicados
+
+### Rendimiento
+
+- [ ] Las tablas tienen paginación configurada (máximo 100 por página)
+- [ ] Los Object Sets tienen filtros iniciales (no cargar todo sin filtro)
+- [ ] Los widgets de carga pesada tienen estados de carga visibles
+- [ ] Se ha probado con volumen realista de datos (no solo en dev con 10 objetos)
+
+### UX y calidad
+
+- [ ] La app tiene título y descripción descriptivos
+- [ ] Los mensajes de error son comprensibles para el usuario final
+- [ ] Los botones están deshabilitados cuando la acción no es posible
+- [ ] Se ha probado con un usuario sin permisos de admin (rol final del usuario)
+- [ ] La app funciona en los navegadores objetivo
+
+### Operaciones
+
+- [ ] El pipeline que alimenta los backing datasets está scheduled correctamente
+- [ ] Hay alertas si el pipeline falla (datos obsoletos)
+- [ ] Se ha documentado quién puede hacer qué en la app
+
+---
+
+## Referencias
+
+- Ver también: `ontologia-foundry.md` — Object Types, Actions, Link Types
+- Ver también: `seguridad-y-gobernanza.md` — Gatekeeper, markings, permisos
+- Ver también: `pipelines-y-transformaciones.md` — Backing datasets y pipelines
+- Ver también: `palantir-foundry-componentes.md` — Visión general de Foundry
