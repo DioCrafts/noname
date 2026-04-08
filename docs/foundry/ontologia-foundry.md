@@ -432,4 +432,5 @@ Ontology Sync **propaga los cambios** a:
 
 - [Palantir Foundry Documentation](https://www.palantir.com/docs/foundry/)
 - [AtlasDB (Open Source)](https://github.com/palantir/atlasdb)
-- Componentes relacionados: ver `palantir-foundry-componentes.md`
+- Componentes relacionados: ver [`palantir-foundry-componentes.md`](palantir-foundry-componentes.md)
+- Integración de datos: ver [`data-integration-magritte.md`](data-integration-magritte.md)
