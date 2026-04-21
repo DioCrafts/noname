@@ -1,0 +1,55 @@
+name: Convert Markdown to DOCX
+
+on:
+  workflow_dispatch:
+    inputs:
+      toc:
+        description: "Add table of contents to every document"
+        required: false
+        default: "false"
+        type: boolean
+  push:
+    paths:
+      - "**.md"
+      - "scripts/convert_md_to_docx.py"
+      - "scripts/convert_md_to_docx.sh"
+      - ".github/workflows/convert-md-to-docx.yml"
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Pandoc
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y pandoc
+
+      - name: Verify Pandoc installation
+        run: pandoc --version
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Convert Markdown files to DOCX
+        run: |
+          ARGS="-o dist/docx"
+          if [ "${{ inputs.toc || 'false' }}" = "true" ]; then
+            ARGS="$ARGS --toc"
+          fi
+          python3 scripts/convert_md_to_docx.py $ARGS
+
+      - name: Upload DOCX artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: docx-files
+          path: dist/docx/
+          if-no-files-found: warn
+          retention-days: 30

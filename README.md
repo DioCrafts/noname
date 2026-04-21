@@ -21,3 +21,15 @@ python3 scripts/convert_md_to_docx.py
 Los ficheros `.docx` se generan en `docx_output/`, respetando la estructura de
 carpetas del repositorio. Consulta [docs/DOCX_CONVERSION.md](docs/DOCX_CONVERSION.md)
 para opciones avanzadas (estilos personalizados, tabla de contenidos, etc.).
+
+### GitHub Actions (automático)
+
+El repositorio incluye un workflow que convierte los `.md` y sube los `.docx`
+como **artifact** descargable. No es necesario tener Pandoc instalado.
+
+- Se ejecuta automáticamente al hacer push de ficheros `.md` o los scripts.
+- También puede lanzarse manualmente desde la pestaña **Actions**.
+- Los artifacts están disponibles durante **30 días** tras cada ejecución.
+
+Consulta [docs/DOCX_CONVERSION.md#github-actions-workflow](docs/DOCX_CONVERSION.md#github-actions-workflow)
+para más detalles.

@@ -139,3 +139,42 @@ pandoc --print-default-data-file reference.docx > reference.docx
 
 `docx_output/` is already listed in `.gitignore` so generated `.docx` files are
 not committed to the repository.
+
+---
+
+## GitHub Actions workflow
+
+The repository ships a workflow that automatically converts all Markdown files
+to DOCX and uploads them as a downloadable artifact — no local Pandoc
+installation required.
+
+**File:** `.github/workflows/convert-md-to-docx.yml`
+
+### Triggers
+
+| Trigger | When |
+|---------|------|
+| **Manual** (`workflow_dispatch`) | Launch from the **Actions** tab at any time |
+| **Automatic** (`push`) | Runs whenever a `*.md` file, a conversion script (`convert_md_to_docx.py` or `convert_md_to_docx.sh`), or the workflow file itself is pushed |
+
+### How to download the generated files
+
+1. Go to **Actions** → **Convert Markdown to DOCX** in the GitHub UI.
+2. Click on any completed run.
+3. Scroll down to **Artifacts** and download **`docx-files`**.
+4. Unzip the archive — the DOCX files mirror the original folder structure.
+
+> Artifacts are kept for **30 days** by default.
+
+### Manual run with table of contents
+
+1. Go to **Actions** → **Convert Markdown to DOCX**.
+2. Click **Run workflow**.
+3. Check **"Add table of contents to every document"** if desired.
+4. Click **Run workflow**.
+
+### Why artifacts instead of committing to the repo?
+
+- Keeps the repository free of generated binaries.
+- DOCX files are always regenerated from the latest Markdown source.
+- Anyone can download a fresh copy without needing Pandoc installed locally.
