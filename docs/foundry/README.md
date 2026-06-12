@@ -29,6 +29,9 @@ Con esos tres documentos ya puedes seguir cualquier conversación del equipo. De
 | 09 | [Apollo e infraestructura](09-apollo-infraestructura.md) | ¿Cómo se despliega y opera? Apollo, Rubix/OpenShift/K8s, Skylab, on-prem y air-gapped. |
 | 10 | [AIP: LLMs sobre la Ontología](10-aip-llms-ontologia.md) | ¿Cómo se usan LLMs con datos gobernados? Grounding, tools, permisos, human-in-the-loop. |
 | 11 | [Errores comunes y troubleshooting](11-errores-comunes-y-troubleshooting.md) | ¿Por dónde empiezo cuando algo falla? Runbook: síntoma → diagnóstico → fix → prevención. |
+| 12 | [Contour y Quiver: análisis exploratorio](12-contour-quiver-analisis-exploratorio.md) | ¿Cómo respondo preguntas con datos sin escribir código? Paths, pivots, series temporales y cuándo promocionar un análisis a pipeline. |
+| 13 | [Functions (TypeScript)](13-functions-typescript.md) | ¿Cómo escribo lógica de negocio en vivo sobre la Ontología? API, versionado, testing, límites y Functions vs Transforms. |
+| 14 | [Streaming y tiempo real](14-streaming-y-tiempo-real.md) | ¿Cuándo (no) usar streaming? Kafka, micro-batch, ventanas, small files, latencia end-to-end y monitorización. |
 
 ### Documentos relacionados (raíz del repositorio)
 
@@ -36,6 +39,7 @@ Con esos tres documentos ya puedes seguir cualquier conversación del equipo. De
 |---|---|
 | [`guia-dashboard-monitorizacion.md`](../../guia-dashboard-monitorizacion.md) | Guía completa (referencia + paso a paso) para construir un **dashboard de monitorización de la plataforma** en Workshop, con Ontología, Functions, Data Health y Automations. |
 | [`post-mortem-2026-04-ontologia-highbury.md`](../../post-mortem-2026-04-ontologia-highbury.md) | Post-mortem real: degradación severa de la Ontología on-prem (Highbury) por co-location de nodos y discos sin RAID 0. Lectura recomendada para perfiles de plataforma. |
+| [`plantilla-post-mortem.md`](../plantillas/plantilla-post-mortem.md) | Plantilla para documentar el próximo incidente con la misma estructura que el post-mortem real. |
 
 ---
 
@@ -51,9 +55,12 @@ Con esos tres documentos ya puedes seguir cualquier conversación del equipo. De
 05 · Flujo end-to-end ──▶ el hilo conductor que une todo
         │
         ├─▶ 03 · Magritte          (cómo ENTRAN los datos)
+        ├─▶ 14 · Streaming         (cómo entran en tiempo real)
         ├─▶ 04 · Pipelines         (cómo se TRANSFORMAN)
         ├─▶ 06 · Ontología         (cómo se MODELAN como objetos)
+        ├─▶ 13 · Functions         (lógica en vivo sobre objetos)
         ├─▶ 07 · Workshop          (cómo se USAN en apps)
+        ├─▶ 12 · Contour/Quiver    (cómo se ANALIZAN sin código)
         ├─▶ 10 · AIP / LLMs        (cómo se usan con IA)
         ├─▶ 08 · Seguridad         (quién puede ver/hacer qué)
         └─▶ 09 · Apollo / Infra    (sobre qué corre todo)
@@ -66,11 +73,12 @@ Con esos tres documentos ya puedes seguir cualquier conversación del equipo. De
 | Rol | Lee en este orden |
 |---|---|
 | **Cualquiera (onboarding)** | 01 → 05 → 02 (a mano) |
-| **Data engineer** | 01 → 05 → 03 → 04 → 06 → 11 |
-| **App builder** | 01 → 05 → 06 → 07 → 08 |
+| **Data engineer** | 01 → 05 → 03 → 04 → 06 → 14 → 11 |
+| **App builder** | 01 → 05 → 06 → 07 → 13 → 08 |
+| **Analista / negocio** | 01 → 05 → 12 → 02 (a mano) |
 | **Plataforma / SRE** | 01 → 09 → 11 → `post-mortem-2026-04-ontologia-highbury.md` → `guia-dashboard-monitorizacion.md` |
 | **Seguridad / gobernanza** | 01 → 08 → 03 (PII) → 06 (Actions) |
-| **IA / AIP** | 01 → 05 → 06 → 10 |
+| **IA / AIP** | 01 → 05 → 06 → 13 → 10 |
 
 ---
 
@@ -85,6 +93,9 @@ Con esos tres documentos ya puedes seguir cualquier conversación del equipo. De
 
 ## Ideas para próximos apuntes
 
-- [ ] `12-contour-y-analisis-exploratorio.md` — Contour, Quiver y análisis ad hoc
-- [ ] `13-functions-typescript-avanzado.md` — Functions en profundidad: testing, versionado, límites
-- [ ] `14-streaming-y-tiempo-real.md` — Streaming datasets, Kafka y casos near-real-time
+- [x] `12-contour-quiver-analisis-exploratorio.md` — Contour, Quiver y análisis ad hoc
+- [x] `13-functions-typescript.md` — Functions en profundidad: testing, versionado, límites
+- [x] `14-streaming-y-tiempo-real.md` — Streaming datasets, Kafka y casos near-real-time
+- [ ] `15-organizacion-proyectos-y-naming.md` — Estructura de proyectos/carpetas, convenciones de nombres y ciclo de vida de recursos
+- [ ] `16-slate-apps-custom.md` — Slate: cuándo compensa y cómo no convertirlo en deuda
+- [ ] `17-data-health-y-monitorizacion-de-datos.md` — Health checks, Monitoring Views y SLAs de datos en profundidad
