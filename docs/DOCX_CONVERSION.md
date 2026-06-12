@@ -108,8 +108,8 @@ The original folder hierarchy is mirrored inside the output directory:
 ```
 docx_output/
 ├── README.docx
-├── foundry_guide.docx
-├── post-mortem-doc1.docx
+├── guia-dashboard-monitorizacion.docx
+├── post-mortem-2026-04-ontologia-highbury.docx
 └── docs/
     └── foundry/
         ├── README.docx

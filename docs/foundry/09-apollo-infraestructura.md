@@ -2,7 +2,7 @@
 
 > Guía práctica sobre **Apollo** (sistema de despliegue continuo de Foundry), su relación con **Rubix**, **OpenShift** y **Kubernetes**, el ciclo de vida de despliegues, **Skylab** (configuración y feature flags), consideraciones on-prem y operaciones con **Monocle**.
 >
-> **Para quién:** perfiles de plataforma/SRE y quien opere Foundry on-prem. Complemento recomendado: el [post-mortem real del repo](../../post-mortem-doc1.md).
+> **Para quién:** perfiles de plataforma/SRE y quien opere Foundry on-prem. Complemento recomendado: el [post-mortem real del repo](../../post-mortem-2026-04-ontologia-highbury.md).
 >
 > Última actualización: 2026-04-08
 

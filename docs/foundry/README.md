@@ -34,8 +34,8 @@ Con esos tres documentos ya puedes seguir cualquier conversación del equipo. De
 
 | Documento | Qué contiene |
 |---|---|
-| [`foundry_guide.md`](../../foundry_guide.md) | Guía completa (referencia + paso a paso) para construir un **dashboard de monitorización de la plataforma** en Workshop, con Ontología, Functions, Data Health y Automations. |
-| [`post-mortem-doc1.md`](../../post-mortem-doc1.md) | Post-mortem real: degradación severa de la Ontología on-prem (Highbury) por co-location de nodos y discos sin RAID 0. Lectura recomendada para perfiles de plataforma. |
+| [`guia-dashboard-monitorizacion.md`](../../guia-dashboard-monitorizacion.md) | Guía completa (referencia + paso a paso) para construir un **dashboard de monitorización de la plataforma** en Workshop, con Ontología, Functions, Data Health y Automations. |
+| [`post-mortem-2026-04-ontologia-highbury.md`](../../post-mortem-2026-04-ontologia-highbury.md) | Post-mortem real: degradación severa de la Ontología on-prem (Highbury) por co-location de nodos y discos sin RAID 0. Lectura recomendada para perfiles de plataforma. |
 
 ---
 
@@ -68,7 +68,7 @@ Con esos tres documentos ya puedes seguir cualquier conversación del equipo. De
 | **Cualquiera (onboarding)** | 01 → 05 → 02 (a mano) |
 | **Data engineer** | 01 → 05 → 03 → 04 → 06 → 11 |
 | **App builder** | 01 → 05 → 06 → 07 → 08 |
-| **Plataforma / SRE** | 01 → 09 → 11 → `post-mortem-doc1.md` → `foundry_guide.md` |
+| **Plataforma / SRE** | 01 → 09 → 11 → `post-mortem-2026-04-ontologia-highbury.md` → `guia-dashboard-monitorizacion.md` |
 | **Seguridad / gobernanza** | 01 → 08 → 03 (PII) → 06 (Actions) |
 | **IA / AIP** | 01 → 05 → 06 → 10 |
 

@@ -213,7 +213,7 @@ Claves: las transiciones válidas se validan en la **Action** (no en la app); ca
 
 ### 9.4 Command center / dashboard operativo
 
-Página de metric cards + charts con drill-down hacia las vistas de detalle. Ejemplo completo y paso a paso en [`foundry_guide.md`](../../foundry_guide.md) (dashboard de monitorización de la propia plataforma).
+Página de metric cards + charts con drill-down hacia las vistas de detalle. Ejemplo completo y paso a paso en [`guia-dashboard-monitorizacion.md`](../../guia-dashboard-monitorizacion.md) (dashboard de monitorización de la propia plataforma).
 
 ---
 
@@ -313,4 +313,4 @@ Recomendaciones:
 - Ver también: [`06-ontologia-foundry.md`](06-ontologia-foundry.md) — Object Sets, Actions, Functions
 - Ver también: [`08-seguridad-y-gobernanza.md`](08-seguridad-y-gobernanza.md) — permisos y markings
 - Ver también: [`05-flujo-datos-end-to-end.md`](05-flujo-datos-end-to-end.md) — dónde encaja la app en el flujo completo
-- Ejemplo paso a paso de un dashboard real: [`foundry_guide.md`](../../foundry_guide.md)
+- Ejemplo paso a paso de un dashboard real: [`guia-dashboard-monitorizacion.md`](../../guia-dashboard-monitorizacion.md)

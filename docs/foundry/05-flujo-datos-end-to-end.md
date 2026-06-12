@@ -336,7 +336,7 @@ Cuando todo esto corre on-prem, los fallos "de plataforma" suelen estar aquí:
 | **TLS / CA** | Si el proxy hace inspección SSL (MITM), la CA corporativa debe estar en el truststore del Agent y de los servicios. Síntoma clásico: `SSL handshake failed`. |
 | **Registry de imágenes** | En air-gapped, las imágenes se sirven desde un registry interno (Harbor/Nexus). Síntoma clásico: `ImagePullBackOff`. |
 | **Capacidad** | Pods `Pending` = faltan recursos/quotas. Los workloads de Spark son a ráfagas: dimensionar para el pico, no la media. |
-| **Co-location** | No colocar varios nodos de un mismo servicio intensivo en I/O en el mismo host físico — ver el [post-mortem real de este repo](../../post-mortem-doc1.md). |
+| **Co-location** | No colocar varios nodos de un mismo servicio intensivo en I/O en el mismo host físico — ver el [post-mortem real de este repo](../../post-mortem-2026-04-ontologia-highbury.md). |
 
 ---
 
@@ -384,7 +384,7 @@ Y la segunda pregunta clave: **¿falla para todos o solo para algunos usuarios?*
 ### Plataforma (on-prem)
 - [ ] Egress/proxy/CA verificados desde los hosts reales
 - [ ] Capacidad para el pico de Spark, no la media
-- [ ] Dueño claro de la monitorización de plataforma (ver [`foundry_guide.md`](../../foundry_guide.md))
+- [ ] Dueño claro de la monitorización de plataforma (ver [`guia-dashboard-monitorizacion.md`](../../guia-dashboard-monitorizacion.md))
 
 ---
 
