@@ -2,6 +2,8 @@
 
 > Glosario práctico de términos recurrentes en Foundry (datasets, pipelines, Ontología, apps, seguridad, infraestructura y AIP).
 >
+> **Para quién:** todo el equipo. No se lee de principio a fin: tenlo abierto en otra pestaña mientras lees los demás documentos.
+>
 > Última actualización: 2026-04-08
 
 ---

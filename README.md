@@ -1,12 +1,20 @@
-# noname
+# Documentación técnica — Palantir Foundry
 
-## Documentación
+Repositorio de documentación interna del equipo sobre **Palantir Foundry**: apuntes por temática, una guía práctica completa y un post-mortem real. Escrito en lenguaje claro para que cualquier miembro del equipo pueda entenderlo, sin asumir experiencia previa con la plataforma.
 
-- [📚 Apuntes de Palantir Foundry](docs/foundry/README.md)
+## ¿Qué hay aquí?
+
+| Recurso | Qué es | Empieza aquí si… |
+|---|---|---|
+| [📚 Apuntes de Foundry](docs/foundry/README.md) | 11 documentos numerados que cubren la plataforma completa: componentes, ingesta, pipelines, Ontología, apps, seguridad, infraestructura, IA y troubleshooting. Incluye rutas de lectura por rol. | …eres nuevo o quieres profundizar en un área concreta. |
+| [📊 foundry_guide.md](foundry_guide.md) | Guía completa (referencia + paso a paso) para construir un **dashboard de monitorización de la plataforma** en Workshop: datasets, Ontología, Functions, Data Health, Automations y un copiloto AIP. | …vas a montar el dashboard de monitorización o quieres un ejemplo realista de app end-to-end. |
+| [🔥 post-mortem-doc1.md](post-mortem-doc1.md) | Post-mortem real (abril 2026): degradación severa de la Ontología on-prem por co-location de nodos Highbury y discos sin RAID 0. | …operas Foundry on-prem o quieres aprender de un incidente real. |
+
+**¿Por dónde empiezo?** Lee el [índice de apuntes](docs/foundry/README.md): tiene una ruta de onboarding de ~45 minutos y rutas específicas por rol (data engineer, app builder, plataforma/SRE, seguridad, IA).
 
 ## Conversión Markdown → DOCX
 
-Este repositorio incluye scripts para convertir todos los ficheros `.md` a
+El repositorio incluye scripts para convertir todos los ficheros `.md` a
 formato Word (`.docx`) usando [Pandoc](https://pandoc.org/).
 
 ```bash
@@ -33,3 +41,10 @@ como **artifact** descargable. No es necesario tener Pandoc instalado.
 
 Consulta [docs/DOCX_CONVERSION.md#github-actions-workflow](docs/DOCX_CONVERSION.md#github-actions-workflow)
 para más detalles.
+
+## Convenciones para contribuir
+
+- Los apuntes viven en `docs/foundry/` con prefijo numérico (`NN-tema.md`) que marca el orden de lectura.
+- Cada documento sigue la misma plantilla: cabecera con "para quién" y fecha, índice, diagramas ASCII, tablas de errores comunes, checklist y glosario rápido.
+- Al añadir un documento: registrarlo en la tabla de [docs/foundry/README.md](docs/foundry/README.md) y enlazarlo desde los documentos relacionados.
+- Al renombrar un fichero: actualizar los enlaces (`grep -rn "nombre-antiguo" .`) — los demás docs lo referencian.

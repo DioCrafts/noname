@@ -1,6 +1,9 @@
 # Palantir Foundry — Integración de Datos con Magritte (Data Connection)
 
 > Guía de referencia sobre el servicio de integración de fuentes externas en Foundry.
+>
+> **Para quién:** data engineers y quien configure u opere la entrada de datos (Agents, conectores, syncs). Responde a "¿cómo llegan los datos a Foundry y por qué no están llegando?".
+>
 > Última actualización: 2026-04-08
 
 ---
@@ -457,5 +460,5 @@ Usa esta lista antes de poner una nueva fuente en producción:
 ## Referencias
 
 - [Palantir Foundry Documentation — Data Connection](https://www.palantir.com/docs/foundry/data-connection/)
-- Componentes relacionados: ver [`palantir-foundry-componentes.md`](palantir-foundry-componentes.md)
-- Ontología y uso de datos integrados: ver [`ontologia-foundry.md`](ontologia-foundry.md)
+- Componentes relacionados: ver [`01-palantir-foundry-componentes.md`](01-palantir-foundry-componentes.md)
+- Ontología y uso de datos integrados: ver [`06-ontologia-foundry.md`](06-ontologia-foundry.md)

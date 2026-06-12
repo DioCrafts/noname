@@ -2,6 +2,8 @@
 
 > Cómo se diseñan y operan pipelines en Foundry: **Pipeline Builder**, **Code Repositories** y **Code Workbooks**; ejecución (Build), incrementales, calidad, rendimiento (Spark) y cómo esto alimenta la Ontología.
 >
+> **Para quién:** data engineers y cualquiera que escriba o revise transformaciones. Responde a "¿cómo paso de datos crudos a datos confiables sin que el coste y los duplicados se disparen?".
+>
 > Última actualización: 2026-04-08
 
 ---
@@ -210,7 +212,7 @@ Síntomas → causas típicas:
 ## 12. Integración con Ontología: backing datasets → Funnel → objetos
 
 Pipelines producen datasets **Gold** que típicamente se usan como:
-- **backing dataset** de un Object Type (ver `ontologia-foundry.md`)
+- **backing dataset** de un Object Type (ver `06-ontologia-foundry.md`)
 
 Luego ocurre:
 
@@ -275,6 +277,6 @@ Workshop / AIP / Object Explorer ven los cambios
 
 ## Referencias
 
-- Ver también: `palantir-foundry-componentes.md`
-- Ver también: `ontologia-foundry.md`
-- Ver también: `data-integration-magritte.md`
+- Ver también: [`01-palantir-foundry-componentes.md`](01-palantir-foundry-componentes.md)
+- Ver también: [`06-ontologia-foundry.md`](06-ontologia-foundry.md)
+- Ver también: [`03-data-integration-magritte.md`](03-data-integration-magritte.md)

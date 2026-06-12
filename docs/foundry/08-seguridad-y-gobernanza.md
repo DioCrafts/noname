@@ -2,6 +2,8 @@
 
 > Guía práctica de seguridad y gobernanza en Foundry: modelo de identidad (**Multipass**), autorización (**Gatekeeper**), permisos por recurso, markings, gobernanza de datasets, patrones para pipelines y errores comunes.
 >
+> **Para quién:** quien gestione permisos o despliegue pipelines/apps a otros usuarios. La mitad de los "no veo datos" del día a día se resuelven con este documento.
+>
 > Última actualización: 2026-04-08
 
 ---
@@ -349,8 +351,8 @@ Cada dataset debe tener un **owner claro** (persona o equipo). El owner es respo
 ### 6.3 Lineage y metadata
 
 El **linaje** (lineage) permite rastrear el origen de cada dato:
-- ¿De qué source externo vienen los datos? (ver [`data-integration-magritte.md`](data-integration-magritte.md))
-- ¿Qué transformaciones se aplicaron? (ver [`pipelines-y-transformaciones.md`](pipelines-y-transformaciones.md))
+- ¿De qué source externo vienen los datos? (ver [`03-data-integration-magritte.md`](03-data-integration-magritte.md))
+- ¿Qué transformaciones se aplicaron? (ver [`04-pipelines-y-transformaciones.md`](04-pipelines-y-transformaciones.md))
 - ¿Qué datasets downstream dependen de este?
 
 ```
@@ -437,7 +439,7 @@ connection = connect(
 # El SA solo necesita permiso sobre la Connection configurada en Foundry
 ```
 
-Ver también: [`data-integration-magritte.md`](data-integration-magritte.md) — sección 8 (Seguridad y red).
+Ver también: [`03-data-integration-magritte.md`](03-data-integration-magritte.md) — sección 8 (Seguridad y red).
 
 ### 7.4 Seguridad en Code Repositories
 
@@ -570,7 +572,7 @@ Ver también: [`data-integration-magritte.md`](data-integration-magritte.md) —
 
 ## Referencias
 
-- Ver también: [`palantir-foundry-componentes.md`](palantir-foundry-componentes.md) — sección 6 (Gobernanza y Metadatos)
-- Ver también: [`ontologia-foundry.md`](ontologia-foundry.md) — sección 4 (Actions) y sección 8 (Writeback)
-- Ver también: [`data-integration-magritte.md`](data-integration-magritte.md) — sección 8 (Seguridad y red)
-- Ver también: [`pipelines-y-transformaciones.md`](pipelines-y-transformaciones.md) — sección 11 (Troubleshooting)
+- Ver también: [`01-palantir-foundry-componentes.md`](01-palantir-foundry-componentes.md) — sección 6 (Gobernanza y Metadatos)
+- Ver también: [`06-ontologia-foundry.md`](06-ontologia-foundry.md) — sección 4 (Actions) y sección 8 (Writeback)
+- Ver también: [`03-data-integration-magritte.md`](03-data-integration-magritte.md) — sección 8 (Seguridad y red)
+- Ver también: [`04-pipelines-y-transformaciones.md`](04-pipelines-y-transformaciones.md) — sección 11 (Troubleshooting)

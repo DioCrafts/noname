@@ -2,6 +2,8 @@
 
 > Guía práctica de diagnóstico: **Magritte/Agents**, **pipelines/builds**, **Spark**, **Funnel/indexing**, **permisos/markings**, y problemas típicos **on‑prem (OpenShift/Rubix)**.
 >
+> **Para quién:** cualquiera con algo roto delante. Empieza por el [mapa síntoma → dónde mirar](#2-mapa-rápido-síntoma--dónde-mirar) y salta a la sección que te toque.
+>
 > Última actualización: 2026-04-08
 
 ---

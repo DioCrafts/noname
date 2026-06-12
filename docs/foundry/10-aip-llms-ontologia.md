@@ -2,6 +2,8 @@
 
 > **AIP (Artificial Intelligence Platform)** es la capa de Foundry que integra modelos de lenguaje (LLMs) con la **Ontología**: permite que los agentes de IA lean objetos, naveguen relaciones y ejecuten **Actions** de forma segura y auditable.
 >
+> **Para quién:** quien diseñe o evalúe casos de uso con IA sobre Foundry. Requiere entender antes la Ontología ([doc 06](06-ontologia-foundry.md)).
+>
 > Última actualización: 2026-04-08
 
 ---
@@ -409,8 +411,8 @@ LLM responde con base en datos reales (menos alucinaciones)
 
 ## Referencias internas del repo
 
-- Ver también: `./ontologia-foundry.md`
-- Ver también: `./workshop-apps-operativas.md`
-- Ver también: `./seguridad-y-gobernanza.md`
-- Ver también: `./apollo-infraestructura.md`
-- Ver también: `./pipelines-y-transformaciones.md`
+- Ver también: [`06-ontologia-foundry.md`](06-ontologia-foundry.md)
+- Ver también: [`07-workshop-apps-operativas.md`](07-workshop-apps-operativas.md)
+- Ver también: [`08-seguridad-y-gobernanza.md`](08-seguridad-y-gobernanza.md)
+- Ver también: [`09-apollo-infraestructura.md`](09-apollo-infraestructura.md)
+- Ver también: [`04-pipelines-y-transformaciones.md`](04-pipelines-y-transformaciones.md)
