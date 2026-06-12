@@ -3,6 +3,8 @@
 > La Ontología es **el corazón de Foundry**. Es lo que transforma un data lake genérico en una plataforma operativa.
 > Sin entenderla, el resto de Foundry no tiene sentido.
 >
+> **Para quién:** todo el equipo (es el concepto más diferenciador de Foundry). Imprescindible para quien modele datos o construya apps.
+>
 > Última actualización: 2026-04-08
 
 ---
@@ -432,5 +434,5 @@ Ontology Sync **propaga los cambios** a:
 
 - [Palantir Foundry Documentation](https://www.palantir.com/docs/foundry/)
 - [AtlasDB (Open Source)](https://github.com/palantir/atlasdb)
-- Componentes relacionados: ver [`palantir-foundry-componentes.md`](palantir-foundry-componentes.md)
-- Integración de datos: ver [`data-integration-magritte.md`](data-integration-magritte.md)
+- Componentes relacionados: ver [`01-palantir-foundry-componentes.md`](01-palantir-foundry-componentes.md)
+- Integración de datos: ver [`03-data-integration-magritte.md`](03-data-integration-magritte.md)

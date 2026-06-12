@@ -1,6 +1,9 @@
 # Palantir Foundry — Componentes y Servicios
 
 > Guía de referencia organizada por capas arquitectónicas.
+>
+> **Para quién:** todo el equipo. Es el mapa de la plataforma y el punto de entrada recomendado: léelo primero y vuelve a él cuando un nombre de servicio no te suene.
+>
 > Última actualización: 2026-04-08
 
 ---
