@@ -32,6 +32,7 @@ Con esos tres documentos ya puedes seguir cualquier conversación del equipo. De
 | 12 | [Contour y Quiver: análisis exploratorio](12-contour-quiver-analisis-exploratorio.md) | ¿Cómo respondo preguntas con datos sin escribir código? Paths, pivots, series temporales y cuándo promocionar un análisis a pipeline. |
 | 13 | [Functions (TypeScript)](13-functions-typescript.md) | ¿Cómo escribo lógica de negocio en vivo sobre la Ontología? API, versionado, testing, límites y Functions vs Transforms. |
 | 14 | [Streaming y tiempo real](14-streaming-y-tiempo-real.md) | ¿Cuándo (no) usar streaming? Kafka, micro-batch, ventanas, small files, latencia end-to-end y monitorización. |
+| 15 | [Pipeline Builder](15-pipeline-builder.md) | ¿Cómo construyo pipelines sin código? Grafo visual, preview, esquemas, incrementales, despliegue y cuándo migrar a código. |
 
 ### Documentos relacionados (raíz del repositorio)
 
@@ -57,6 +58,7 @@ Con esos tres documentos ya puedes seguir cualquier conversación del equipo. De
         ├─▶ 03 · Magritte          (cómo ENTRAN los datos)
         ├─▶ 14 · Streaming         (cómo entran en tiempo real)
         ├─▶ 04 · Pipelines         (cómo se TRANSFORMAN)
+        ├─▶ 15 · Pipeline Builder  (transformar sin código)
         ├─▶ 06 · Ontología         (cómo se MODELAN como objetos)
         ├─▶ 13 · Functions         (lógica en vivo sobre objetos)
         ├─▶ 07 · Workshop          (cómo se USAN en apps)
@@ -73,9 +75,9 @@ Con esos tres documentos ya puedes seguir cualquier conversación del equipo. De
 | Rol | Lee en este orden |
 |---|---|
 | **Cualquiera (onboarding)** | 01 → 05 → 02 (a mano) |
-| **Data engineer** | 01 → 05 → 03 → 04 → 06 → 14 → 11 |
+| **Data engineer** | 01 → 05 → 03 → 04 → 15 → 06 → 14 → 11 |
 | **App builder** | 01 → 05 → 06 → 07 → 13 → 08 |
-| **Analista / negocio** | 01 → 05 → 12 → 02 (a mano) |
+| **Analista / negocio** | 01 → 05 → 12 → 15 → 02 (a mano) |
 | **Plataforma / SRE** | 01 → 09 → 11 → `post-mortem-2026-04-ontologia-highbury.md` → `guia-dashboard-monitorizacion.md` |
 | **Seguridad / gobernanza** | 01 → 08 → 03 (PII) → 06 (Actions) |
 | **IA / AIP** | 01 → 05 → 06 → 13 → 10 |
@@ -96,6 +98,7 @@ Con esos tres documentos ya puedes seguir cualquier conversación del equipo. De
 - [x] `12-contour-quiver-analisis-exploratorio.md` — Contour, Quiver y análisis ad hoc
 - [x] `13-functions-typescript.md` — Functions en profundidad: testing, versionado, límites
 - [x] `14-streaming-y-tiempo-real.md` — Streaming datasets, Kafka y casos near-real-time
-- [ ] `15-organizacion-proyectos-y-naming.md` — Estructura de proyectos/carpetas, convenciones de nombres y ciclo de vida de recursos
-- [ ] `16-slate-apps-custom.md` — Slate: cuándo compensa y cómo no convertirlo en deuda
-- [ ] `17-data-health-y-monitorizacion-de-datos.md` — Health checks, Monitoring Views y SLAs de datos en profundidad
+- [x] `15-pipeline-builder.md` — Pipelines visuales sin código: preview, esquemas, incrementales y migración a código
+- [ ] `16-organizacion-proyectos-y-naming.md` — Estructura de proyectos/carpetas, convenciones de nombres y ciclo de vida de recursos
+- [ ] `17-slate-apps-custom.md` — Slate: cuándo compensa y cómo no convertirlo en deuda
+- [ ] `18-data-health-y-monitorizacion-de-datos.md` — Health checks, Monitoring Views y SLAs de datos en profundidad

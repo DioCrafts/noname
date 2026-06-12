@@ -6,7 +6,7 @@ Repositorio de documentación interna del equipo sobre **Palantir Foundry**: apu
 
 | Recurso | Qué es | Empieza aquí si… |
 |---|---|---|
-| [📚 Apuntes de Foundry](docs/foundry/README.md) | 14 documentos numerados que cubren la plataforma completa: componentes, ingesta, pipelines, Ontología, apps, análisis, Functions, streaming, seguridad, infraestructura, IA y troubleshooting. Incluye rutas de lectura por rol. | …eres nuevo o quieres profundizar en un área concreta. |
+| [📚 Apuntes de Foundry](docs/foundry/README.md) | 15 documentos numerados que cubren la plataforma completa: componentes, ingesta, pipelines (en código y visuales), Ontología, apps, análisis, Functions, streaming, seguridad, infraestructura, IA y troubleshooting. Incluye rutas de lectura por rol. | …eres nuevo o quieres profundizar en un área concreta. |
 | [📊 guia-dashboard-monitorizacion.md](guia-dashboard-monitorizacion.md) | Guía completa (referencia + paso a paso) para construir un **dashboard de monitorización de la plataforma** en Workshop: datasets, Ontología, Functions, Data Health, Automations y un copiloto AIP. | …vas a montar el dashboard de monitorización o quieres un ejemplo realista de app end-to-end. |
 | [🔥 post-mortem-2026-04-ontologia-highbury.md](post-mortem-2026-04-ontologia-highbury.md) | Post-mortem real (abril 2026): degradación severa de la Ontología on-prem por co-location de nodos Highbury y discos sin RAID 0. | …operas Foundry on-prem o quieres aprender de un incidente real. |
 | [📝 Plantilla de post-mortem](docs/plantillas/plantilla-post-mortem.md) | Plantilla lista para copiar, con la misma estructura que el post-mortem real, para documentar el próximo incidente. | …acabas de gestionar un incidente y toca escribirlo. |

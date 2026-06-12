@@ -49,6 +49,8 @@ Un **pipeline** en Foundry es una secuencia de **transformaciones** que:
 
 **Regla de oro:** explora en Workbooks, productiviza en Repos/Pipeline Builder.
 
+> Pipeline Builder en profundidad (grafo visual, preview, incrementales, migración a código): [`15-pipeline-builder.md`](15-pipeline-builder.md).
+
 ---
 
 ## 3. Modelo mental: DAG, dependencias y Build
